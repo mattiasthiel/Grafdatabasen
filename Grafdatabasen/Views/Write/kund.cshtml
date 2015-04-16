@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Lägg till/ändra kund";
+}
+<div class="row">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</div>
+
+<div role="tabpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="navTabs">
+        <li role="presentation">@Html.ActionLink("Uppdrag", "uppdrag", "Write")</li>
+        <li role="presentation">@Html.ActionLink("Konsult", "konsult", "Write")</li>
+        <li role="presentation" class="active">@Html.ActionLink("Kund", "#", "Write")</li>
+        <li role="presentation">@Html.ActionLink("Kompetens", "kompetens", "Write")</li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div id="kund">
+
+@model Grafdatabasen.ViewModels.AddKundViewModel
+
+
+            <div class="row">
+                <p>&nbsp;</p>
+                @using (Html.BeginForm())
+                {
+                    <div class="col-md-12">
+                        <div class="form-horizontal">
+
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @placeholder = "Företag/Organisation:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Telefon, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Telefon, new { htmlAttributes = new { @class = "form-control", placeholder = "Telefonnummer:" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Adress, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Adress, new { htmlAttributes = new { @class = "form-control", @placeholder = "Adress:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Postadress, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Postadress, new { htmlAttributes = new { @class = "form-control", placeholder = "Postadress:" } })
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Kontakt, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Kontakt, new { htmlAttributes = new { @class = "form-control", @placeholder = "Kontaktperson:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Epost, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Epost, new { htmlAttributes = new { @class = "form-control", placeholder = "Epost:" } })
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Konto, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Konto, new { htmlAttributes = new { @class = "form-control", @placeholder = "Konto:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Avdelning, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Avdelning, new { htmlAttributes = new { @class = "form-control", placeholder = "Avdelning:" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Kategori, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Kategori, new { htmlAttributes = new { @class = "form-control", @placeholder = "Kategori:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Segment, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Segment, new { htmlAttributes = new { @class = "form-control", placeholder = "Marknadssegment:" } })
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <div class="col-md-offset-11 ">
+                                    <input type="submit" value="Spara" onclick="location.href='@Url.Action("Index", "Write")'" class="btn btn-primary" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#jsonKunder").select2({
+            minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+            width: 'resolve',   // to adjust proper width of select2 wrapped elements
+            placeholder: "-- Välj Kund: --",
+            ajax: {
+                type: "POST",
+                url: "http://localhost:7474/db/data/transaction/commit",
+                contentType: "application/json",
+                dataType: "json",
+                // data: JSON.stringify(query)  eller skriva cypher direkt:
+                data: { "query": "Match (c:Customer) return c.name" },
+                //now pass a callback to success to do something with the data
+                success: function (data) {
+                    console.log(data);
+                    //return data.Results;
+                }
+            }
+        });
+    })
+</script>
+

@@ -1,0 +1,47 @@
+﻿@model Grafdatabasen.ViewModels.AddKompetensViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Stäng</span></button>
+    <h4 class="modal-title text-center" id="modalHeader">Lägg till kompetens:</h4>
+</div>
+<div class="modal-body">
+    <div class="col-md-12">
+        <div class="form-horizontal">
+
+            <div class="form-group form-group-sm">
+                @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @placeholder = "Namn:" } })
+                </div>
+                @Html.LabelFor(m => m.Kompetenstyp, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Kompetenstyp, new { htmlAttributes = new { @class = "form-control", @placeholder = "Kompetenstyp:", @Styles = "height: 40px" } })
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    @using (Html.BeginForm("AddKompetens", "Write", FormMethod.Post))
+    {
+
+        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Avbryt</button>
+        <button type="submit" class="btn btn-sm btn-success" id="uppdateraKompetens">Spara</button>
+    }
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#uppdateraKompetens').click(function () {
+            $('#modal-container').modal('hide');
+        });
+    });
+</script>
+

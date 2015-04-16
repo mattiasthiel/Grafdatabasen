@@ -1,0 +1,84 @@
+﻿@model Grafdatabasen.ViewModels.AddKundViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Stäng</span></button>
+    <h4 class="modal-title text-center" id="modalHeader">Lägg till kund:</h4>
+</div>
+<div class="modal-body">
+    <div class="col-md-12">
+        <div class="form-horizontal">
+
+            <div class="form-group form-group-sm">
+                @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @placeholder = "Företag/Organisation:" } })
+                </div>
+                @Html.LabelFor(m => m.Telefon, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Telefon, new { htmlAttributes = new { @class = "form-control", placeholder = "Telefonnummer:" } })
+                </div>
+            </div>
+
+            <div class="form-group form-group-sm">
+                @Html.LabelFor(m => m.Adress, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Adress, new { htmlAttributes = new { @class = "form-control", @placeholder = "Adress:" } })
+                </div>
+                @Html.LabelFor(m => m.Postadress, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Postadress, new { htmlAttributes = new { @class = "form-control", placeholder = "Postadress:" } })
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                @Html.LabelFor(m => m.Kontakt, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Kontakt, new { htmlAttributes = new { @class = "form-control", @placeholder = "Kontaktperson:" } })
+                </div>
+                @Html.LabelFor(m => m.Epost, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Epost, new { htmlAttributes = new { @class = "form-control", placeholder = "Epost:" } })
+                </div>
+            </div>
+            <div class="form-group form-group-sm">
+                @Html.LabelFor(m => m.Konto, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Konto, new { htmlAttributes = new { @class = "form-control", @placeholder = "Konto:" } })
+                </div>
+                @Html.LabelFor(m => m.Avdelning, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Avdelning, new { htmlAttributes = new { @class = "form-control", placeholder = "Avdelning:" } })
+                </div>
+            </div>
+
+            <div class="form-group form-group-sm">
+                @Html.LabelFor(m => m.Kategori, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Kategori, new { htmlAttributes = new { @class = "form-control", @placeholder = "Kategori:" } })
+                </div>
+                @Html.LabelFor(m => m.Segment, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Segment, new { htmlAttributes = new { @class = "form-control", placeholder = "Marknadssegment:" } })
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    @using (Html.BeginForm("AddKund", "Write", FormMethod.Post))
+    {
+
+        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Avbryt</button>
+        <button type="submit" class="btn btn-sm btn-success" id="uppdateraKund">Spara</button>
+    }
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#uppdateraKund').click(function () {
+            $('#modal-container').modal('hide');
+        });
+    });
+</script>
+

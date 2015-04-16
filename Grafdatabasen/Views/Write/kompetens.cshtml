@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "Lägg till/ändra kompetenser";
+}
+<div class="row">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</div>
+
+<div role="tabpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="navTabs">
+        <li role="presentation">@Html.ActionLink("Uppdrag", "uppdrag", "Write")</li>
+        <li role="presentation">@Html.ActionLink("Konsult", "konsult", "Write")</li>
+        <li role="presentation">@Html.ActionLink("Kund", "kund", "Write")</li>
+        <li role="presentation" class="active">@Html.ActionLink("Kompetens", "#", "Write")</li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div id="kompetens">
+            @model Grafdatabasen.ViewModels.AddKompetensViewModel
+
+
+            <div class="row">
+                <p>&nbsp;</p>
+                @using (Html.BeginForm())
+                {
+                    <div class="col-md-12">
+                        <div class="form-horizontal">
+
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @id="", @placeholder = "Namn:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Kompetenstyp, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Kompetenstyp, new { htmlAttributes = new { @class = "form-control", @placeholder = "Kompetenstyp:", @Styles = "height: 40px" } })
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#jsonKompetenser").select2({
+            minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+            width: 'resolve',   // to adjust proper width of select2 wrapped elements
+            placeholder: "-- Välj Kompetens: --",
+            ajax: {
+                type: "POST",
+                url: "http://localhost:7474/db/data/transaction/commit",
+                contentType: "application/json",
+                dataType: "json",
+                // data: JSON.stringify(query)  eller skriva cypher direkt:
+                data: { "query": "Match (c:Customer) return c.name" },
+                //now pass a callback to success to do something with the data
+                success: function (data) {
+                    console.log(data);
+                    //return data.Results;
+                }
+            }
+        });
+    })
+</script>

@@ -1,0 +1,249 @@
+﻿@{
+    ViewBag.Title = "Lägg till/ändra konsult";
+}
+<div class="row">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</div>
+
+<div role="tabpanel">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="navTabs">
+        <li role="presentation">@Html.ActionLink("Uppdrag", "uppdrag", "Write")</li>
+        <li role="presentation" class="active">@Html.ActionLink("Konsult", "#", "Write")</li>
+        <li role="presentation">@Html.ActionLink("Kund", "kund", "Write")</li>
+        <li role="presentation">@Html.ActionLink("Kompetens", "kompetens", "Write")</li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div id="konsult">
+
+            @model Grafdatabasen.ViewModels.AddKonsultViewModel
+
+
+            <div class="row">
+                <p>&nbsp;</p>
+                @using (Html.BeginForm())
+                {
+                    <div class="col-md-12">
+                        <div class="form-horizontal">
+
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @placeholder = "Namn:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Titel, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Titel, new { htmlAttributes = new { @class = "form-control", placeholder = "Titel:" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Epost, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Epost, new { htmlAttributes = new { @class = "form-control", @placeholder = "Epost:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Telefon, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Telefon, new { htmlAttributes = new { @class = "form-control", placeholder = "Telefon:" } })
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Link, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Link, new { htmlAttributes = new { @class = "form-control", @placeholder = "Link:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Kontor, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Kontor, new { htmlAttributes = new { @class = "form-control", placeholder = "Kontor:" } })
+                                    @*@Html.ValidationMessageFor(m => m.valtKontor)*@
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 80px" } })
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="panel panel-default ">
+                                        <!-- Default panel contents -->
+                                        <div class="panel-heading clearfix">
+                                            <h5 class="panel-title pull-left" style="padding-top: 5px;">Kompetenser:</h5>
+                                            @Html.ActionLink("Lägg till kompetens ", "showPartialKompetens", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
+                                        </div>
+                                        <!-- Table -->
+                                        <table id="listaKompetenser" class="table table-striped table-hover ">
+                                            <thead>
+                                                <tr>
+                                                    <th>Typ</th>
+                                                    <th style="font-weight:300">Kompetens</th>
+                                                    <th>Nivå</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><span class="glyphicon glyphicon-sd-video" aria-hidden="true"></span></td>
+                                                    <td>C#</td>
+                                                    <td>2</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span class="glyphicon glyphicon-object-align-vertical" aria-hidden="true"></span></td>
+                                                    <td>Neo4j</td>
+                                                    <td>5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span class="glyphicon glyphicon-phone" aria-hidden="true"></span></td>
+                                                    <td>MVC Web Apps</td>
+                                                    <td>1</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <div class="panel panel-default ">
+                                        <!-- Default panel contents -->
+                                        <div class="panel-heading clearfix">
+                                            <h5 class="panel-title pull-left" style="padding-top: 5px;">Utbildningar:</h5>
+                                            <input type="submit" value="Lägg till utbildning" onclick="location.href='@Url.Action("Index", "Write")'" id="addUtbildningBtn" class="btn btn-default btn-sm pull-right" />
+                                        </div>
+                                        <!-- Table -->
+                                        <table id="listaUtbildningar" class="table table-striped table-hover ">
+                                            <thead>
+                                                <tr>
+                                                    <th>Utbildning</th>
+                                                    <th>År</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Mjukvaruutveckling</td>
+                                                    <td>2012 - 2015</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Småskola</td>
+                                                    <td>1999 - 2008</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Lekis</td>
+                                                    <td>1997 - 1999</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="panel panel-default ">
+                                        <!-- Default panel contents -->
+                                        <div class="panel-heading clearfix">
+                                            <h5 class="panel-title pull-left" style="padding-top: 5px;">Tidigare anställningar:</h5>
+                                            <input type="submit" value="Lägg till tidigare anställning" onclick="location.href='@Url.Action("Index", "Write")'" id="addTidigareAnstBtn" class="btn btn-default btn-sm pull-right" />
+                                        </div>
+                                        <!-- Table -->
+                                        <table id="listaTidigareAnst" class="table table-striped table-hover ">
+                                            <thead>
+                                                <tr>
+                                                    <th>Arbetsgivare</th>
+                                                    <th>Segment</th>
+                                                    <th>År</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Skogsstyrelsen</td>
+                                                    <td>Skog</td>
+                                                    <td>2008 - 2012</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Dataföretag</td>
+                                                    <td>Data</td>
+                                                    <td>1999 - 2008</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Kiosken</td>
+                                                    <td>Detaljhandel</td>
+                                                    <td>1997 - 1999</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                            </div>
+
+                            <div class="form-group form-group-sm">
+                                <div class="col-md-offset-11 ">
+                                    <input type="submit" value="Spara" onclick="location.href='@Url.Action("Index", "Write")'" class="btn btn-sm btn-primary" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.date').datepicker({
+            format: "yyyy-mm-dd",
+            weekStart: 1,
+            language: "sv",
+            orientation: "top auto",
+            keyboardNavigation: false,
+            autoclose: true,
+            todayHighlight: true,
+            startDate: "2002-01-01"
+        });
+
+        // The query
+        var query = {
+            "statements": [{
+                "statement": "MATCH (c:Customer) RETURN c"
+            }]
+        };
+        $("#jsonKunder").select2({
+            minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+            width: 'resolve',   // to adjust proper width of select2 wrapped elements
+            placeholder: "-- Välj Kund: --",
+            ajax: {
+                type: "POST",
+                url: "http://localhost:7474/db/data/transaction/commit",
+                contentType: "application/json",
+                dataType: "json",
+                // data: JSON.stringify(query)  eller skriva cypher direkt:
+                data: { "query": "Match (c:Customer) return c.name" },
+                //now pass a callback to success to do something with the data
+                success: function (data) {
+                    console.log(data);
+                    //return data.Results;
+                }
+            }
+        });
+        $('#jsonKunder').on("change", function (e) {
+
+            document.getElementById('bestallare').removeAttr('disabled');
+            // TODO: Kör ny funktion som hämtar alla beställare för vald kund.
+
+        });
+    })
+</script>
+
