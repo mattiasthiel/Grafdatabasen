@@ -32,15 +32,15 @@
                             <div class="form-group form-group-sm">
                                 @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control" , @placeholder = "Namn:"} })
+                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @id="uppdragnamnText" , @placeholder = "Uppdragets namn:"} })
                                 </div>
                                 @Html.LabelFor(m => m.Startdatum, new { @class = "control-label col-md-1" })
                                 <div class="col-md-2">
-                                    @Html.EditorFor(m => m.Startdatum, new { htmlAttributes = new { @class = "form-control date", @placeholder = "Startdatum:" } })
+                                    @Html.EditorFor(m => m.Startdatum, new { htmlAttributes = new { @class = "form-control date", @id = "uppdragstartdatumText", @placeholder = "Startdatum:" } })
                                 </div>
                                 @Html.LabelFor(m => m.Slutdatum, new { @class = "control-label col-md-1" })
                                 <div class="col-md-2" id="slutdatum">
-                                    @Html.EditorFor(m => m.Slutdatum, new { htmlAttributes = new { @class = "form-control date", @placeholder = "Slutdatum:" } })
+                                    @Html.EditorFor(m => m.Slutdatum, new { htmlAttributes = new { @class = "form-control date", @id = "uppdragslutdatumText", @placeholder = "Slutdatum:" } })
                                 </div>
 
 
@@ -49,33 +49,33 @@
                             <div class="form-group">
                                 @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
+                                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @id = "uppdragbeskrivningText", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
                                 </div>
                                 @Html.LabelFor(m => m.Problem, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Problem, new { htmlAttributes = new { @class = "form-control", placeholder = "Problem:", @Styles = "height: 40px" } })
+                                    @Html.EditorFor(m => m.Problem, new { htmlAttributes = new { @class = "form-control", @id = "uppdragproblemText", placeholder = "Problem:", @Styles = "height: 40px" } })
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 @Html.LabelFor(m => m.Losning, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Losning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Lösning:", @Styles = "height: 40px" } })
+                                    @Html.EditorFor(m => m.Losning, new { htmlAttributes = new { @class = "form-control", @id = "uppdraglosningText", @placeholder = "Lösning:", @Styles = "height: 40px" } })
                                 </div>
                                 @Html.LabelFor(m => m.Resultat, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Resultat, new { htmlAttributes = new { @class = "form-control", placeholder = "Resultat:", @Styles = "height: 40px" } })
+                                    @Html.EditorFor(m => m.Resultat, new { htmlAttributes = new { @class = "form-control", @id = "uppdragresultatText", placeholder = "Resultat:", @Styles = "height: 40px" } })
                                 </div>
                             </div>
 
                             <div class="form-group form-group-sm">
                                 @Html.LabelFor(m => m.Timmar, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Timmar, new { htmlAttributes = new { @class = "form-control", @placeholder = "Timmar:" } })
+                                    @Html.EditorFor(m => m.Timmar, new { htmlAttributes = new { @class = "form-control", @id = "uppdragtimmarText", @placeholder = "Timmar:" } })
                                 </div>
                                 @Html.LabelFor(m => m.Kostnad, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Kostnad, new { htmlAttributes = new { @class = "form-control", placeholder = "Kostnad:" } })
+                                    @Html.EditorFor(m => m.Kostnad, new { htmlAttributes = new { @class = "form-control", @id = "uppdragkostnadText", placeholder = "Kostnad:" } })
                                 </div>
                             </div>
 
@@ -92,7 +92,7 @@
                                 </div>
                                 @Html.LabelFor(m => m.Bestallare, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Bestallare, new { htmlAttributes = new { @class = "form-control", @id = "bestallare", placeholder = "Beställare:", disabled = "disabled" } })
+                                    @Html.EditorFor(m => m.Bestallare, new { htmlAttributes = new { @class = "form-control", @id = "uppdragbestallareText", placeholder = "Beställare:", disabled = "disabled" } })
                                 </div>
                             </div>
 
@@ -147,18 +147,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        // Flytta till _layout:
-        //$('.date').datepicker({
-        //    format: "yyyy-mm-dd",
-        //    weekStart: 1,
-        //    language: "sv",
-        //    orientation: "top auto",
-        //    keyboardNavigation: false,
-        //    autoclose: true,
-        //    todayHighlight: true,
-        //    startDate: "2002-01-01"
-        //});
-
         // The query
         var query = {
             "statements": [{
@@ -183,11 +171,18 @@
                 }
             }
         });
-        $('#jsonKunder').on("change", function (e) {
-            
-            document.getElementById('bestallare').removeAttr('disabled');
-            // TODO: Kör ny funktion som hämtar alla beställare för vald kund.
-            
-        });
+        
     })
+</script>
+<script type="text/javascript">
+    $('#uppdragkundText').on("change", function (e) {
+        document.getElementById('uppdragbestallareText').removeAttr('disabled');
+        // TODO: Kör ny funktion som hämtar alla beställare för vald kund.
+            
+    });
+</script>
+<script type="text/javascript">
+    $('#uppdragnamnText').change(function () {
+        // TODO: funktion som plockar ut alla attribut för valt uppdrag. 
+    });
 </script>
