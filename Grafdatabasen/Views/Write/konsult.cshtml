@@ -200,50 +200,10 @@
 
 </div>
 
+
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $('.date').datepicker({
-            format: "yyyy-mm-dd",
-            weekStart: 1,
-            language: "sv",
-            orientation: "top auto",
-            keyboardNavigation: false,
-            autoclose: true,
-            todayHighlight: true,
-            startDate: "2002-01-01"
-        });
-
-        // The query
-        var query = {
-            "statements": [{
-                "statement": "MATCH (c:Customer) RETURN c"
-            }]
-        };
-        $("#jsonKunder").select2({
-            minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
-            width: 'resolve',   // to adjust proper width of select2 wrapped elements
-            placeholder: "-- Välj Kund: --",
-            ajax: {
-                type: "POST",
-                url: "http://localhost:7474/db/data/transaction/commit",
-                contentType: "application/json",
-                dataType: "json",
-                // data: JSON.stringify(query)  eller skriva cypher direkt:
-                data: { "query": "Match (c:Customer) return c.name" },
-                //now pass a callback to success to do something with the data
-                success: function (data) {
-                    console.log(data);
-                    //return data.Results;
-                }
-            }
-        });
-        $('#jsonKunder').on("change", function (e) {
-
-            document.getElementById('bestallare').removeAttr('disabled');
-            // TODO: Kör ny funktion som hämtar alla beställare för vald kund.
-
-        });
     })
 </script>
 
