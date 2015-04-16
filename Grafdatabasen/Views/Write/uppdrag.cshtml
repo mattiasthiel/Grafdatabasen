@@ -11,7 +11,7 @@
 <div role="tabpanel">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" id="navTabs">
-        <li role="presentation" class="active">@Html.ActionLink("Uppdrag", "#", "Write")</li>
+        <li role="presentation" class="active">@Html.ActionLink("Uppdrag", "", "Write")</li>
         <li role="presentation">@Html.ActionLink("Konsult", "konsult", "Write")</li>
         <li role="presentation">@Html.ActionLink("Kund", "kund", "Write")</li>
         <li role="presentation">@Html.ActionLink("Kompetens", "kompetens", "Write")</li>
@@ -22,129 +22,126 @@
 
 @model Grafdatabasen.ViewModels.AddUppdragViewModel
 
+            <div class="row">
+                <p>&nbsp;</p>
+                @using (Html.BeginForm())
+                {
+                    <div class="col-md-12">
+                        <div class="form-horizontal">
 
-<div class="row">
-    <p>&nbsp;</p>
-    @using (Html.BeginForm())
-    {
-        <div class="col-md-12">
-            <div class="form-horizontal">
-
-                <div class="form-group form-group-sm">
-                    @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control" , @placeholder = "Namn:"} })
-                    </div>
-                    @Html.LabelFor(m => m.Startdatum, new { @class = "control-label col-md-1" })
-                    <div class="col-md-2">
-                        @Html.EditorFor(m => m.Startdatum, new { htmlAttributes = new { @class = "form-control date", @placeholder = "Startdatum:" } })
-                    </div>
-                    @Html.LabelFor(m => m.Slutdatum, new { @class = "control-label col-md-1" })
-                    <div class="col-md-2" id="slutdatum">
-                        @Html.EditorFor(m => m.Slutdatum, new { htmlAttributes = new { @class = "form-control date", @placeholder = "Slutdatum:" } })
-                    </div>
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control" , @placeholder = "Namn:"} })
+                                </div>
+                                @Html.LabelFor(m => m.Startdatum, new { @class = "control-label col-md-1" })
+                                <div class="col-md-2">
+                                    @Html.EditorFor(m => m.Startdatum, new { htmlAttributes = new { @class = "form-control date", @placeholder = "Startdatum:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Slutdatum, new { @class = "control-label col-md-1" })
+                                <div class="col-md-2" id="slutdatum">
+                                    @Html.EditorFor(m => m.Slutdatum, new { htmlAttributes = new { @class = "form-control date", @placeholder = "Slutdatum:" } })
+                                </div>
 
 
-                </div>
+                            </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
-                    </div>
-                    @Html.LabelFor(m => m.Problem, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Problem, new { htmlAttributes = new { @class = "form-control", placeholder = "Problem:", @Styles = "height: 40px" } })
-                    </div>
-                </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
+                                </div>
+                                @Html.LabelFor(m => m.Problem, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Problem, new { htmlAttributes = new { @class = "form-control", placeholder = "Problem:", @Styles = "height: 40px" } })
+                                </div>
+                            </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Losning, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Losning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Lösning:", @Styles = "height: 40px" } })
-                    </div>
-                    @Html.LabelFor(m => m.Resultat, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Resultat, new { htmlAttributes = new { @class = "form-control", placeholder = "Resultat:", @Styles = "height: 40px" } })
-                    </div>
-                </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Losning, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Losning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Lösning:", @Styles = "height: 40px" } })
+                                </div>
+                                @Html.LabelFor(m => m.Resultat, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Resultat, new { htmlAttributes = new { @class = "form-control", placeholder = "Resultat:", @Styles = "height: 40px" } })
+                                </div>
+                            </div>
 
-                <div class="form-group form-group-sm">
-                    @Html.LabelFor(m => m.Timmar, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Timmar, new { htmlAttributes = new { @class = "form-control", @placeholder = "Timmar:" } })
-                    </div>
-                    @Html.LabelFor(m => m.Kostnad, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Kostnad, new { htmlAttributes = new { @class = "form-control", placeholder = "Kostnad:" } })
-                    </div>
-                </div>
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Timmar, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Timmar, new { htmlAttributes = new { @class = "form-control", @placeholder = "Timmar:" } })
+                                </div>
+                                @Html.LabelFor(m => m.Kostnad, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Kostnad, new { htmlAttributes = new { @class = "form-control", placeholder = "Kostnad:" } })
+                                </div>
+                            </div>
 
-                <div class="form-group form-group-sm">
-                    @Html.LabelFor(m => m.Kund, new { @class = "control-label col-md-1" })
-                    <div class="col-md-4 select2-container">
-                        @Html.EditorFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })
-                        @*<select id="jsonKunder" data-tags="false"></select>*@
-                        @*@Html.TextboxFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })*@
-                        @*@Html.ValidationMessageFor(m => m.valdKundId)*@
-                    </div>
-                    <div class="col-md-1">
-                        @Html.ActionLink("Ny kund ", "showPartialKund", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
-                    </div>
-                    @Html.LabelFor(m => m.Bestallare, new { @class = "control-label col-md-1" })
-                    <div class="col-md-5">
-                        @Html.EditorFor(m => m.Bestallare, new { htmlAttributes = new { @class = "form-control", @id = "bestallare", placeholder = "Beställare:", disabled = "disabled" } })
-                    </div>
-                </div>
+                            <div class="form-group form-group-sm">
+                                @Html.LabelFor(m => m.Kund, new { @class = "control-label col-md-1" })
+                                <div class="col-md-4 select2-container">
+                                    @Html.EditorFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })
+                                    @*<select id="jsonKunder" data-tags="false"></select>*@
+                                    @*@Html.TextboxFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })*@
+                                    @*@Html.ValidationMessageFor(m => m.valdKundId)*@
+                                </div>
+                                <div class="col-md-1">
+                                    @Html.ActionLink("Ny kund ", "showPartialKund", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
+                                </div>
+                                @Html.LabelFor(m => m.Bestallare, new { @class = "control-label col-md-1" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(m => m.Bestallare, new { htmlAttributes = new { @class = "form-control", @id = "bestallare", placeholder = "Beställare:", disabled = "disabled" } })
+                                </div>
+                            </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <p></p>
-                    </div>
-                    <div class="col-md-2">
-                    </div>
-                </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p></p>
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                            </div>
 
-                <div class="panel panel-default">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading clearfix">
-                        <h5 class="panel-title pull-left" style="padding-top: 5px;">Konsulter knutna till detta uppdrag:</h5>
-                        @*<input type="submit" value="Lägg till konsult" onclick="location.href='@Url.Action("Index", "Write")'"  id="addUppgiftBtn" class="btn btn-default btn-sm pull-right" />*@
-                        @Html.ActionLink("Lägg till konsult ", "showPartialUppgift", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
-                    </div>
-                    <!-- Table -->
-                    <table id="listaKonsulter" class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Konsult</th>
-                                <th>Roll</th>
-                                <th>Beskrivning</th>
-                                <th>Grad</th>
-                                <th>Startdatum</th>
-                                <th>Slutdatum</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="row">
-                </div>
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading clearfix">
+                                    <h5 class="panel-title pull-left" style="padding-top: 5px;">Konsulter knutna till detta uppdrag:</h5>
+                                    @*<input type="submit" value="Lägg till konsult" onclick="location.href='@Url.Action("Index", "Write")'"  id="addUppgiftBtn" class="btn btn-default btn-sm pull-right" />*@
+                                    @Html.ActionLink("Lägg till konsult ", "showPartialUppgift", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
+                                </div>
+                                <!-- Table -->
+                                <table id="listaKonsulter" class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Konsult</th>
+                                            <th>Roll</th>
+                                            <th>Beskrivning</th>
+                                            <th>Grad</th>
+                                            <th>Startdatum</th>
+                                            <th>Slutdatum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                            </div>
 
-                <div class="form-group form-group-sm">
-                    <div class="col-md-offset-11 ">
-                        <input type="submit" value="Spara" onclick="location.href='@Url.Action("Index", "Write")'" class="btn btn-primary" />
-                    </div>
-                </div>
+                            <div class="form-group form-group-sm">
+                                <div class="col-md-offset-11 ">
+                                    <input type="submit" value="Spara" onclick="location.href='@Url.Action("Index", "Write")'" class="btn btn-primary" />
+                                </div>
+                            </div>
 
-            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>        
         </div>
-
-    }
-</div>        
     </div>
-
-    </div>
-
 </div>
 
 <script type="text/javascript">
