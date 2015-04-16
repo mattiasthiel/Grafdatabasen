@@ -82,19 +82,28 @@
                             <div class="form-group form-group-sm">
                                 @Html.LabelFor(m => m.Kund, new { @class = "control-label col-md-1" })
                                 <div class="col-md-4 select2-container">
-                                    @Html.EditorFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })
-                                    @*<select id="jsonKunder" data-tags="false"></select>*@
-                                    @*@Html.TextboxFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })*@
-                                    @*@Html.ValidationMessageFor(m => m.valdKundId)*@
+                                    @{
+                                        List<SelectListItem> listItem = new List<SelectListItem>();
+                                    }
+                                    @Html.DropDownListFor(m => m.Kund, listItem, new { id = "KundId", @class = "form-control" })
+
+
                                 </div>
                                 <div class="col-md-1">
                                     @Html.ActionLink("Ny kund ", "showPartialKund", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
                                 </div>
                                 @Html.LabelFor(m => m.Bestallare, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Bestallare, new { htmlAttributes = new { @class = "form-control", @id = "bestallare", placeholder = "Beställare:", disabled = "disabled" } })
+                                    @{
+                                        List<SelectListItem> listItem2 = new List<SelectListItem>();
+                                    }
+                                    @Html.DropDownListFor(m => m.Bestallare, listItem2, new { id = "Bestallare", @class = "form-control" })
+
+
                                 </div>
                             </div>
+
+
 
                             <div class="row">
                                 <div class="col-md-4">
@@ -144,8 +153,12 @@
     </div>
 </div>
 
+<!-- FUSKAT LITE HÄR OCH LADDAT IN JQUERY IGEN , FÖRSÖK HITTA VARFÖR DEN INTE LADDAR-->
+@Scripts.Render("~/Scripts/jquery-2.1.3.min.js")
+
+
 <script type="text/javascript">
-    $(document).ready(function () {
+ /*   $(document).ready(function () {
 
         // Flytta till _layout:
         //$('.date').datepicker({
@@ -190,4 +203,63 @@
             
         });
     })
+
+
+    */
+</script>
+
+<script type="text/javascript">
+    // The query
+    var query = {
+        "statements": [{
+            "statement": "MATCH path = (n) RETURN path",
+            "resultDataContents": ["graph", "row"]
+        }]
+    };
+
+    var graphen;
+
+    //the helper function provided by neo4j documents
+    function idIndex(a, id) {
+        for (var i = 0; i < a.length; i++) {
+            if (a[i].id == id) return i;
+        }
+        return null;
+    }
+    // jQuery ajax call
+    var request = $.ajax({
+        type: "POST",
+        url: "http://localhost:7474/db/data/transaction/commit",
+        accepts: { json: "application/json" },
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(query),
+        //now pass a callback to success to do something with the data
+        success: function (data) {
+            var nodes = [], links = [];
+            // parsing the output of neo4j rest api
+            data.results[0].data.forEach(function (row) {
+                row.graph.nodes.forEach(function (n) {
+                    console.log(n.labels);
+                    if (idIndex(nodes, n.id) == null) {
+                        if (n.labels == "Kund") {
+                            $("#KundId").append($("<option>").text(n.properties.Namn).val(n.properties.Namn).attr('KundId', n.id));
+                        }
+                        if (n.labels == "Bestallare") {
+                            $("#Bestallare").append($("<option>").text(n.properties.Namn + ", " + n.properties.Foretag).val(n.properties.Namn).attr('Bestallare', n.id));
+                        }
+
+                        nodes.push({ id: n.id, label: n.labels[0], title: n.properties.name });
+                    }
+                });
+                links = links.concat(row.graph.relationships.map(function (r) {
+                    // the neo4j documents has an error : replace start with source and end with target
+                    return { source: idIndex(nodes, r.startNode), target: idIndex(nodes, r.endNode), type: r.type };
+                }));
+            });
+            graphen = { nodes: nodes, links: links };
+            //console.log(graphen);
+
+        }
+    });
 </script>

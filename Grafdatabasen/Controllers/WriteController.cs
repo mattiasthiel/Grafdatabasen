@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Grafdatabasen.Models;
 
 namespace Grafdatabasen.Controllers
 {
@@ -15,6 +16,33 @@ namespace Grafdatabasen.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult uppdrag(AddUppdragViewModel vm)
+        {
+            var nyProj = new Uppdrag { Namn = vm.Namn, Problem = vm.Problem, Losning = vm.Losning, Resultat = vm.Resultat };
+            WebApiConfig.GraphClient.Cypher
+                .Merge("(uppdrag:Uppdrag { Namn: {Namn} })")
+                .Set("uppdrag = {nyProj}")
+                .WithParams(new
+                {
+                    Namn = nyProj.Namn,
+                    nyProj
+                })
+                .ExecuteWithoutResults();
+
+            WebApiConfig.GraphClient.Cypher
+                .Match("(kund:Kund)", "(uppdrag:Uppdrag)", "(bestallare:Bestallare)")
+                .Where((Kund kund) => kund.Namn == vm.Kund)
+                .AndWhere((Uppdrag uppdrag) => uppdrag.Namn == vm.Namn)
+                .AndWhere((Bestallare bestallare) => bestallare.Namn == vm.Bestallare)
+                .CreateUnique("kund-[:BESTALLT]->uppdrag")
+                .CreateUnique("bestallare-[:BESTALLT_AV]->kund")
+                .ExecuteWithoutResults();
+
+            return View();
+        }
+        
+
         public ActionResult kompetens()
         {
             ViewBag.Message = "Lägg till/ändra kompetens";
@@ -25,8 +53,9 @@ namespace Grafdatabasen.Controllers
         public ActionResult uppdrag()
         {
             ViewBag.Message = "Lägg till/ändra uppdrag";
+            var vm = new AddUppdragViewModel();
 
-            return View();
+            return View(vm);
         }
 
         public ActionResult kund()
@@ -57,15 +86,52 @@ namespace Grafdatabasen.Controllers
 
         public ActionResult showPartialKund()
         {
-            return PartialView("_AddKundPartial");
+            AddKundViewModel vm = new AddKundViewModel();
+            return PartialView("_AddKundPartial", vm);
         }
 
         [HttpPost]
-        public ActionResult AddKund()
+        public ActionResult SkapaNyKund(AddKundViewModel vm)
         {
-            // TODO:  Spara data.
+            Response.Write("DET FUNKAR");
+
+            var nyKund = new Kund { Namn = vm.Namn, Adress = vm.Adress
+                , Postadress = vm.Postadress, Kategori = vm.Kategori
+                , Marknadssegment = vm.Segment, Telefon = vm.Telefon };
+            var nyBestallare = new Bestallare { Namn = vm.Kontakt, Avdelning = vm.Avdelning
+                , Epost = vm.Epost, Konto = vm.Konto, Telefon = vm.Telefon};
+            WebApiConfig.GraphClient.Cypher
+                .Merge("(kund:Kund { Namn: {Namn} })")
+                .Set("kund = {nyKund}")
+                .WithParams(new
+                {
+                    Namn = nyKund.Namn,
+                    nyKund
+
+                })
+                .ExecuteWithoutResults();
+
+            WebApiConfig.GraphClient.Cypher
+                .Merge("(bestallare:Bestallare { Namn: {Namn} })")
+                .Set("bestallare = {nyBestallare}")
+                .WithParams(new
+                {
+                    Namn = nyBestallare.Namn,
+                    nyBestallare
+
+                })
+                .ExecuteWithoutResults();
+
+            WebApiConfig.GraphClient.Cypher
+                .Match("(kund:Kund)", "(bestallare:Bestallare)")
+                .Where((Kund kund) => kund.Namn == vm.Namn)
+                .AndWhere((Bestallare bestallare) => bestallare.Namn == vm.Kontakt)
+                .CreateUnique("kund-[:JOBBAR]->bestallare")
+                .ExecuteWithoutResults(); 
+
             return RedirectToAction("uppdrag");
         }
+
 
         public ActionResult showPartialKompetens()
         {

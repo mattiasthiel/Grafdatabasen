@@ -4,6 +4,8 @@
     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Stäng</span></button>
     <h4 class="modal-title text-center" id="modalHeader">Lägg till kund:</h4>
 </div>
+@using (Html.BeginForm("SkapaNyKund", "Write", FormMethod.Post))
+{
 <div class="modal-body">
     <div class="col-md-12">
         <div class="form-horizontal">
@@ -66,14 +68,16 @@
     </div>
 </div>
 <div class="modal-footer">
-    @using (Html.BeginForm("AddKund", "Write", FormMethod.Post))
-    {
+    
+        <input type="submit" value="Skapa" onclick="location.href='@Url.Action("SkapaNyKund", "Write")'" class="btn btn-sm btn-success" />
+        <!--
 
         <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Avbryt</button>
         <button type="submit" class="btn btn-sm btn-success" id="uppdateraKund">Spara</button>
-    }
+        -->
+    
 </div>
-
+    }
 <script type="text/javascript">
     $(function () {
         $('#uppdateraKund').click(function () {

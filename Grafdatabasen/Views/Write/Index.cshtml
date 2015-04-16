@@ -83,17 +83,24 @@
                             <div class="form-group form-group-sm">
                                 @Html.LabelFor(m => m.Kund, new { @class = "control-label col-md-1" })
                                 <div class="col-md-4 select2-container">
-                                    @Html.EditorFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })
-                                    @*<select id="jsonKunder" data-tags="false"></select>*@
-                                    @*@Html.TextboxFor(m => m.Kund, new { htmlAttributes = new { @class = "form-control", @id = "jsonKunder", @placeholder = "Välj kund:", @Styles = "width:1000px" } })*@
-                                    @*@Html.ValidationMessageFor(m => m.valdKundId)*@
+                                    @{
+                                        List<SelectListItem> listItem = new List<SelectListItem>();
+                                    }
+                                    @Html.DropDownListFor(m => m.Kund, listItem, new { id = "KundId", @class = "form-control" })
+
+
                                 </div>
                                 <div class="col-md-1">
                                     @Html.ActionLink("Ny kund ", "showPartialKund", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
                                 </div>
                                 @Html.LabelFor(m => m.Bestallare, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Bestallare, new { htmlAttributes = new { @class = "form-control", @id = "bestallare", placeholder = "Beställare:", disabled = "disabled" } })
+                                    @{
+                                        List<SelectListItem> listItem2 = new List<SelectListItem>();
+                                    }
+                                    @Html.DropDownListFor(m => m.Bestallare, listItem2, new { id = "Bestallare", @class = "form-control" })
+
+
                                 </div>
                             </div>
 
@@ -194,3 +201,4 @@
         });
     })
 </script>
+
