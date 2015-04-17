@@ -31,8 +31,8 @@
 
                             <div class="form-group form-group-sm">
                                 @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
-                                <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @id="uppdragnamnText" , @placeholder = "Uppdragets namn:"} })
+                                <div class="col-md-5" id="uppdragTypeahead">
+                                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control typeahead", @placeholder = "Uppdragets namn:", @Style ="width:1000px" } })
                                 </div>
                                 @Html.LabelFor(m => m.Startdatum, new { @class = "control-label col-md-1" })
                                 <div class="col-md-2">
@@ -156,7 +156,12 @@
 </div>
 
 <!-- FUSKAT LITE HÄR OCH LADDAT IN JQUERY IGEN , FÖRSÖK HITTA VARFÖR DEN INTE LADDAR-->
-@Scripts.Render("~/Scripts/jquery-2.1.3.min.js")
+@*Scripts.Render("~/Scripts/jquery-2.1.3.min.js")
+@Scripts.Render("~/Scripts/typeahead.bundle.js")*@
+
+
+
+
 
 
 <script type="text/javascript">
@@ -211,6 +216,7 @@
         }
         return null;
     }
+    var states = [];
     // jQuery ajax call
     var request = $.ajax({
         type: "POST",
@@ -225,8 +231,10 @@
             // parsing the output of neo4j rest api
             data.results[0].data.forEach(function (row) {
                 row.graph.nodes.forEach(function (n) {
-                    console.log(n.labels);
                     if (idIndex(nodes, n.id) == null) {
+                        if (n.labels == "Uppdrag") {
+                            states.push(n.properties.Namn);
+                        }
                         if (n.labels == "Kund") {
                             $("#KundId").append($("<option>").text(n.properties.Namn).val(n.properties.Namn).attr('KundId', n.id));
                         }
@@ -243,11 +251,48 @@
                 }));
             });
             graphen = { nodes: nodes, links: links };
-            //console.log(graphen);
+            console.log(states);
+
+            var substringMatcher = function (strs) {
+                return function findMatches(q, cb) {
+                    var matches, substrRegex;
+
+                    // an array that will be populated with substring matches
+                    matches = [];
+
+                    // regex used to determine if a string contains the substring `q`
+                    substrRegex = new RegExp(q, 'i');
+
+                    // iterate through the pool of strings and for any string that
+                    // contains the substring `q`, add it to the `matches` array
+                    $.each(strs, function (i, str) {
+                        if (substrRegex.test(str)) {
+                            // the typeahead jQuery plugin expects suggestions to a
+                            // JavaScript object, refer to typeahead docs for more info
+                            matches.push({ value: str });
+                        }
+                    });
+
+                    cb(matches);
+                };
+            };
+
+            $('#uppdragTypeahead .typeahead').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            },
+            {
+                name: 'states',
+                displayKey: 'value',
+                source: substringMatcher(states)
+
+            });
 
         }
     });
-</script>
+
+</script> // uppdragTypeahead
 <script type="text/javascript">
     $('#uppdragkundText').on("change", function (e) {
         document.getElementById('uppdragbestallareText').removeAttr('disabled');
