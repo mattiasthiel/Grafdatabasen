@@ -197,6 +197,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Bestallare.cs" />
+    <Compile Include="Models\Kompetens.cs" />
     <Compile Include="Models\Konsult.cs" />
     <Compile Include="Models\Kontor.cs" />
     <Compile Include="Models\Kund.cs" />

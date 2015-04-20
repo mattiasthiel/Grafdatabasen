@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Grafdatabasen.ViewModels
+namespace Grafdatabasen.Models
 {
-    public class AddKompetensViewModel
+    public class Kompetens
     {
-        public string Konsult { get; set; }
-        public string Kompetenstyp { get; set; }
-
         public string Namn { get; set; }
-
+        public string Typ { get; set; }
         public string Beskrivning { get; set; }
-
     }
 }

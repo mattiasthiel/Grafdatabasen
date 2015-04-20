@@ -139,8 +139,6 @@ namespace Grafdatabasen.Controllers
         [HttpPost]
         public ActionResult SkapaNyKund(AddKundViewModel vm)
         {
-            Response.Write("DET FUNKAR");
-
             var nyKund = new Kund { Namn = vm.Namn, Adress = vm.Adress
                 , Postadress = vm.Postadress, Kategori = vm.Kategori
                 , Marknadssegment = vm.Segment, Telefon = vm.Telefon };
@@ -180,13 +178,31 @@ namespace Grafdatabasen.Controllers
 
         public ActionResult showPartialKompetens()
         {
-            return PartialView("_AddKompetensPartial");
+            AddKompetensViewModel vm = new AddKompetensViewModel();
+            return PartialView("_AddKompetensPartial", vm);
         }
 
         [HttpPost]
-        public ActionResult AddKompetens()
+        public ActionResult AddKompetens(AddKompetensViewModel vm)
         {
-            // TODO:  Spara data.
+            var nyKompetens = new Kompetens { Namn = vm.Namn, Beskrivning = vm.Beskrivning, Typ = vm.Kompetenstyp };
+            WebApiConfig.GraphClient.Cypher
+                .Merge("(kompetens:Kompetens { Namn: {Namn} })")
+                .Set("kompetens = {nyKompetens}")
+                .WithParams(new
+                {
+                    Namn = nyKompetens.Namn,
+                    nyKompetens
+
+                })
+                .ExecuteWithoutResults();
+
+            WebApiConfig.GraphClient.Cypher
+                .Match("(kompetens:Kompetens)", "(konsult:Konsult)")
+                .Where((Kompetens kompetens) => kompetens.Namn == vm.Namn)
+                .AndWhere((Konsult konsult) => konsult.Namn == vm.Konsult)
+                .CreateUnique("konsult-[:KAN]->kompetens")
+                .ExecuteWithoutResults();
             return RedirectToAction("konsult");
         }
 
