@@ -9,6 +9,7 @@
     @Styles.Render("~/Content/bootstrap-datepicker.min.css")
     @Scripts.Render("~/Scripts/jquery-2.1.3.min.js")
     @Scripts.Render("~/Scripts/typeahead.bundle.js")
+    @Scripts.Render("~/Scripts/Ajaxneo4j.js")
 
 
 
@@ -109,3 +110,12 @@
 
     </body>
 </html>
+
+<script type="text/javascript">
+    //$(document).ready(function () {
+        var ajaxgraf = ajaxneo4j("match path= (n) return  n");
+        //console.log(ajaxgraf.responseJSON.results[0].data);
+        sessionStorage.setItem('nodes', JSON.stringify(ajaxgraf.responseJSON.results[0].data));
+        
+    //});
+</script>

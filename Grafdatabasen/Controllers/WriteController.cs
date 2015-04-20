@@ -68,26 +68,72 @@ namespace Grafdatabasen.Controllers
         public ActionResult konsult()
         {
             ViewBag.Message = "Lägg till/ändra konsult";
-
-            return View();
+            AddKonsultViewModel vm = new AddKonsultViewModel();
+            return View(vm);
         }
+        [HttpPost]
+        public ActionResult konsult(AddKonsultViewModel vm)
+        {
+            var nyKonsult = new Konsult
+            {
+                Namn = vm.Namn,
+                Titel = vm.Titel,
+                Epost = vm.Epost,
+                Telefonnummer = vm.Telefon,
+                Link = vm.Link,
+                Kontor = vm.Kontor,
+                Beskrivning = vm.Beskrivning
+            };
+            var nyttKontor = new Kontor { Namn = vm.Kontor };
+            
+            WebApiConfig.GraphClient.Cypher
+                .Merge("(konsult:Konsult { Namn: {Namn} })")
+                .Set("konsult = {nyKonsult}")
+                .WithParams(new
+                {
+                    Namn = nyKonsult.Namn,
+                    nyKonsult
 
+                })
+                .ExecuteWithoutResults();
+
+            WebApiConfig.GraphClient.Cypher
+                .Merge("(kontor:Kontor { Namn: {Namn} })")
+                .Set("kontor = {nyttKontor}")
+                .WithParams(new
+                {
+                    Namn = nyttKontor.Namn,
+                    nyttKontor
+
+                })
+                .ExecuteWithoutResults();
+
+            WebApiConfig.GraphClient.Cypher
+                .Match("(konsult:Konsult)", "(kontor:Kontor)")
+                .Where((Konsult konsult) => konsult.Namn == vm.Namn)
+                .AndWhere((Kontor kontor) => kontor.Namn == vm.Kontor)
+                .CreateUnique("konsult-[:JOBBAR_På]->kontor")
+                .ExecuteWithoutResults();
+
+
+            return RedirectToAction("konsult");
+        }
         public ActionResult showPartialUppgift()
         {
             return PartialView("_AddUppgiftPartial");
         }
 
-        [HttpPost]
-        public ActionResult AddUppgift()
-        {
-            // TODO:  Spara data.
-            return RedirectToAction("uppdrag");
-        }
 
         public ActionResult showPartialKund()
         {
             AddKundViewModel vm = new AddKundViewModel();
             return PartialView("_AddKundPartial", vm);
+        }
+
+        public ActionResult showPartialKonsult()
+        {
+            AddKonsultViewModel vm = new AddKonsultViewModel();
+            return PartialView("_AddKonsultPartial", vm);
         }
 
         [HttpPost]
@@ -127,8 +173,7 @@ namespace Grafdatabasen.Controllers
                 .Where((Kund kund) => kund.Namn == vm.Namn)
                 .AndWhere((Bestallare bestallare) => bestallare.Namn == vm.Kontakt)
                 .CreateUnique("kund-[:JOBBAR]->bestallare")
-                .ExecuteWithoutResults(); 
-
+                .ExecuteWithoutResults();
             return RedirectToAction("uppdrag");
         }
 

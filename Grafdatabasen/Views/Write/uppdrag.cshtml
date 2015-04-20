@@ -227,6 +227,7 @@
         data: JSON.stringify(query),
         //now pass a callback to success to do something with the data
         success: function (data) {
+
             var nodes = [], links = [];
             // parsing the output of neo4j rest api
             data.results[0].data.forEach(function (row) {
@@ -292,7 +293,7 @@
         }
     });
 
-</script> // uppdragTypeahead
+</script>
 <script type="text/javascript">
     $('#uppdragkundText').on("change", function (e) {
         document.getElementById('uppdragbestallareText').removeAttr('disabled');
