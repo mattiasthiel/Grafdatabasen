@@ -1,23 +1,83 @@
 ﻿@{
     ViewBag.Title = "Sök i grafdatabasen";
 }
+
+@model Grafdatabasen.ViewModels.SearchViewModel
+<style>
+    .searchitem {
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size:16px;
+        font-style:italic;
+        color:green;
+        line-height:26px;
+            
+    }
+    .mtlist {
+        border:none;
+        border-bottom:1px dotted lightgrey;
+    }
+</style>
 <div class="row"><p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
 </div>
-
-<div id="graph" class="col-md-8">
+<div class="panel-group col-md-6" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Sökfunktion</h3>
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Enkel sökning
+                </a>
+            </h4>
         </div>
-        <div class="panel-body">
-            Här ska sökningen göras
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+            Enkel sökning kommer här...!            
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Nyfiken sökning
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div id="searchPanel" class="panel-body">
+                @{
+                    List<SelectListItem> lista1 = new List<SelectListItem>();
+                    lista1.Add(new SelectListItem { Text = "--Välj--", Value = "0" });
+                    List<SelectListItem> lista2 = new List<SelectListItem>();
+                    lista2.Add(new SelectListItem { Text = "--Välj--", Value = "0" });
+
+                    List<SelectListItem> lista3 = new List<SelectListItem>();
+                    lista3.Add(new SelectListItem { Text = "--Välj--", Value = "0" });
+
+                    List<SelectListItem> lista4 = new List<SelectListItem>();
+                    lista4.Add(new SelectListItem { Text = "--Välj--", Value = "0" });
+
+                    List<SelectListItem> lista5 = new List<SelectListItem>();
+                    lista5.Add(new SelectListItem { Text = "--Välj--", Value = "0" });
+
+                }
+
+                @using (Html.BeginForm())
+                {
+
+                    <p class="searchitem"><span>"Jag söker </span>@Html.DropDownListFor(m => m.SearchItem1, lista1, new { id = "lista1", @class = "mtlist" })</p>
+                    <p class="searchitem"><span> ...som </span>@Html.DropDownListFor(m => m.SearchItem2, lista2, new { id = "lista2", @class = "mtlist" }) @Html.DropDownListFor(m => m.SearchItem3, lista3, new { id = "lista3", @class = "mtlist" })</p>
+                    <p class="searchitem"><span>  ...och som </span>@Html.DropDownListFor(m => m.SearchItem4, lista4, new { id = "lista4", @class = "mtlist" }) @Html.DropDownListFor(m => m.SearchItem5, lista5, new { id = "lista5", @class = "mtlist" })"</p>
+                    <input type="submit" value="Sök" id="searchButton" onclick="location.href='@Url.Action("createSearchString", "Search", null)'" class="btn btn-sm btn-primary" />
+
+                }
+            </div>
         </div>
     </div>
 </div>
-<div id="details" class="col-md-4">
+<div id="details" class="col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Sökresultat</h3>
@@ -28,4 +88,55 @@
     </div>
 
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var chosen1, chosen2, chosen3, chosen4, chosen5;
+        $('#lista1').empty();$('#lista1').append("<option> -- välj: -- </option>");
+        $('#lista2').empty();$('#lista2').append("<option> -- välj: -- </option>");
+        $('#lista3').empty();$('#lista3').append("<option> -- välj: -- </option>");
+        $('#lista4').empty();$('#lista4').append("<option> -- välj: -- </option>");
+        $('#lista5').empty();$('#lista5').append("<option> -- välj: -- </option>");
+        var startalternativ = ajaxsearch("match (n) return distinct labels(n)");
+        startalternativ.responseJSON.results[0].data.forEach(function (n) {
+            $("#lista1").append("<option>" + n.row[0] + "</option>");
+        });
+
+        $('#lista1').change(function () {
+            $('#lista2').empty();
+            $('#lista2').append("<option> -- välj: -- </option>");
+            chosen1 = $("#lista1 option:selected").text();
+            var listalternativ = ajaxsearch("match (n:" + chosen1 + ")-[r]-() return distinct type(r)");
+            console.log(listalternativ);
+            // Det jag söker finns i:
+            // JSON.stringify(lista2alternativ.responseJSON.results[0].data[i].row[0]
+            listalternativ.responseJSON.results[0].data.forEach(function (n) {
+                $("#lista2").append("<option>" + n.row[0] + "</option>");
+            });
+            $('#lista3').empty(); $('#lista3').append("<option> -- välj: -- </option>");
+            $('#lista4').empty(); $('#lista4').append("<option> -- välj: -- </option>");
+            $('#lista5').empty(); $('#lista5').append("<option> -- välj: -- </option>");
+        });
+
+        $('#lista2').change(function () {
+            $('#lista3').empty(); $('#lista3').append("<option> -- välj: -- </option>");
+            chosen2 = $("#lista2 option:selected").text();
+            var listalternativ = ajaxsearch("match (n:" + chosen1 + ")-[r:"+ chosen2 +"]-(m) return distinct labels(m)");
+            listalternativ.responseJSON.results[0].data.forEach(function (n) {
+                $("#lista3").append("<option>" + n.row[0] + "</option>");
+            });
+            $('#lista4').empty(); $('#lista4').append("<option> -- välj: -- </option>");
+            $('#lista5').empty(); $('#lista5').append("<option> -- välj: -- </option>");
+        });
+        $('#lista3').change(function () {
+            $('#lista4').empty(); $('#lista4').append("<option> -- välj: -- </option>");
+            chosen3 = $("#lista3 option:selected").text();
+            var listalternativ = ajaxsearch("match (n:" + chosen1 + ")-[r:" + chosen2 + "]-(m:"+ chosen3 +") return m.name");
+            listalternativ.responseJSON.results[0].data.forEach(function (n) {
+                $("#lista4").append("<option>" + n.row[0] + "</option>");
+            });
+            $('#lista5').empty(); $('#lista5').append("<option> -- välj: -- </option>");
+        });
+    });
+</script>
 

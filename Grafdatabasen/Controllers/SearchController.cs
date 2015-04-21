@@ -1,39 +1,28 @@
-﻿using System;
+﻿using Grafdatabasen.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+using System.Web;
+using System.Web.Mvc;
+using Grafdatabasen.Models;
 
 namespace Grafdatabasen.Controllers
 {
-    public class SearchController : ApiController
+    public class SearchController : Controller
     {
-        // GET: api/Search
-        public IEnumerable<string> Get()
+        // GET: Write
+        public ActionResult Index()
         {
-            return new string[] { "value1", "value2" };
+            return View();
         }
 
-        // GET: api/Search/5
-        public string Get(int id)
+        [HttpPost]
+        public ActionResult createSearchString(SearchViewModel vm)
         {
-            return "value";
+
+            return RedirectToAction("Search");
         }
 
-        // POST: api/Search
-        public void Post([FromBody]string value)
-        {
-        }
 
-        // PUT: api/Search/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Search/5
-        public void Delete(int id)
-        {
-        }
     }
 }

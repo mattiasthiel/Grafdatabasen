@@ -165,6 +165,7 @@
     <Content Include="Scripts\locales\bootstrap-datepicker.sv.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\npm.js" />
+    <Content Include="Scripts\Search.js" />
     <Content Include="Scripts\select2.js" />
     <Content Include="Scripts\select2.min.js" />
     <Content Include="Scripts\typeahead.bundle.js" />
@@ -216,6 +217,7 @@
     <Compile Include="ViewModels\AddKundViewModel.cs" />
     <Compile Include="ViewModels\AddUppdragViewModel.cs" />
     <Compile Include="ViewModels\AddUppgiftViewModel.cs" />
+    <Compile Include="ViewModels\SearchViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
