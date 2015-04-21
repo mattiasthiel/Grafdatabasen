@@ -31,7 +31,7 @@
 
                             <div class="form-group form-group-sm">
                                 @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     @{
                                         List<SelectListItem> listItem = new List<SelectListItem>();
                                     }
@@ -212,9 +212,6 @@
     </div>
 
 </div>
-
-
-
 
 <script type="text/javascript">
     var graph = ajaxneo4j("match path= (n)-[r]-() return path");

@@ -1,13 +1,8 @@
 ﻿
 function ajaxsearch(querymatch) {
     // The query
-    //var querymatch = ;"match path= (n) return  n"
     var query = {
-        "statements": [{
-            "statement": "" + querymatch + "",
-            "resultDataContents": ["row"]
-        }]
-    };
+        "statements": [{ "statement": "" + querymatch + "", "resultDataContents": ["row"] }] };
 
     //the helper function provided by neo4j documents
     function idIndex(a, id) {
@@ -30,8 +25,6 @@ function ajaxsearch(querymatch) {
         success: function (data) {
             result = data.row[0];
         }
-
     });
     return request;
-
 }
