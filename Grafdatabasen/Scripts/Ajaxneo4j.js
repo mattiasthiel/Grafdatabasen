@@ -23,6 +23,7 @@ function ajaxneo4j(querymatch){
     var result;
     var request = $.ajax({
         type: "POST",
+        async: false,
         url: "http://localhost:7474/db/data/transaction/commit",
         accepts: { json: "application/json" },
         dataType: "json",

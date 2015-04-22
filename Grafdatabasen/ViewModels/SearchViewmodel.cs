@@ -13,5 +13,7 @@ namespace Grafdatabasen.ViewModels
         public string SearchItem3 { get; set; }
         public string SearchItem4 { get; set; }
         public string SearchItem5 { get; set; }
+
+        public string Nod { get; set; }
     }
 }

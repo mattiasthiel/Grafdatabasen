@@ -33,7 +33,13 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
-            Enkel sökning kommer här...!            
+                <div class="col-md-5" id="uppdragTypeahead">
+                    @Html.EditorFor(m => m.Nod, new { htmlAttributes = new { @class = "form-control typeahead", @placeholder = "Sök i databasen:" } })
+                </div>
+                <div class="col-md-1 pull-right">
+                    <input type="submit" value="Visa" onclick="location.href='@Url.Action("Search", "Graf")'" id="visaDetaljer" class="btn btn-default pull-right" />
+                </div>
+           
             </div>
         </div>
     </div>
