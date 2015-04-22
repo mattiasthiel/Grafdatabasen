@@ -12,18 +12,25 @@
 
             <div class="form-group form-group-sm">
                 @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
-                <div class="col-md-5">
-                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @placeholder = "Namn:" } })
+                <div class="col-md-5" id="KompetensNamn">
+                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control typeahead", @placeholder = "Namn:" } })
                 </div>
                 @Html.LabelFor(m => m.Kompetenstyp, new { @class = "control-label col-md-1" })
                 <div class="col-md-5">
-                    @Html.EditorFor(m => m.Kompetenstyp, new { htmlAttributes = new { @class = "form-control", @placeholder = "Kompetenstyp:", @Styles = "height: 40px" } })
+                    @{
+                        List<SelectListItem> listItem = new List<SelectListItem>();
+                    }
+                    @Html.DropDownListFor(m => m.Kompetenstyp, listItem, new { @id = "TypModal", @class = "form-control" })
                 </div>
             </div>
             <div class="form-group form-group-sm">
                 @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
                 <div class="col-md-5">
-                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
+                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @id = "BeskrivningModal", @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
+                </div>
+                @Html.LabelFor(m => m.Niva, new { @class = "control-label col-md-1" })
+                <div class="col-md-5">
+                    @Html.EditorFor(m => m.Niva, new { htmlAttributes = new { @class = "form-control", @placeholder = "Nivå:", @Styles = "height: 40px" } })
                 </div>
             </div>
 
@@ -44,6 +51,82 @@
 </div>
 }
 <script type="text/javascript">
+    var states = ['Test', 'Test2'];
+    var temp = $.parseJSON(sessionStorage.getItem('nodes'));
+    temp.forEach(function (row){
+        row.graph.nodes[0].labels.forEach(function (n){
+            if (n == "Kompetens"){
+                states.push(row.graph.nodes[0].properties.Namn);
+            }
+        })
+        
+    });
+    
+    var substringMatcher = function (strs) {
+        return function findMatches(q, cb) {
+            var matches, substrRegex;
+
+            // an array that will be populated with substring matches
+            matches = [];
+
+            // regex used to determine if a string contains the substring `q`
+            substrRegex = new RegExp(q, 'i');
+
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            $.each(strs, function (i, str) {
+                if (substrRegex.test(str)) {
+                    // the typeahead jQuery plugin expects suggestions to a
+                    // JavaScript object, refer to typeahead docs for more info
+                    matches.push({ value: str });
+                }
+            });
+
+            cb(matches);
+        };
+    };
+
+    $('#KompetensNamn .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+    },
+    {
+        name: 'states',
+        displayKey: 'value',
+        source: substringMatcher(states)
+    });
+    console.log(temp);
+    $('#KompetensNamn').on('typeahead:selected', function (e, kompetens) {
+        temp.forEach(function (row){
+            if (row.graph.nodes[0].properties.Namn == kompetens['value']){
+                //$('#TypModal:text').val(row.graph.nodes[0].properties.Typ);
+                $('#TypModal').empty();
+
+                $('#BeskrivningModal:text').val(row.graph.nodes[0].properties.Beskrivning);
+                $("#TypModal").append($("<option>").text(row.graph.nodes[0].properties.Typ).val(row.graph.nodes[0].properties.Typ).attr('Typ', row.graph.nodes[0].id));
+
+            }
+        });
+    }).on('typeahead:autocompleted', function (e, kompetens) {
+        temp.forEach(function (row){
+            if (row.graph.nodes[0].properties.Namn == kompetens['value']){
+                //$('#TypModal:text').val(row.graph.nodes[0].properties.Typ);
+                $('#TypModal').empty();
+
+                $('#BeskrivningModal:text').val(row.graph.nodes[0].properties.Beskrivning);
+                $("#TypModal").append($("<option>").text(row.graph.nodes[0].properties.Typ).val(row.graph.nodes[0].properties.Typ).attr('Typ', row.graph.nodes[0].id));
+
+            }
+        });
+    }).on('change', function () {
+        $('#TypModal').empty();
+        $("#TypModal").append($("<option>").text("Teknik").val("Teknik").attr('Typ', 1));
+        $("#TypModal").append($("<option>").text("Metod").val("Metod").attr('Typ', 2));
+        $("#TypModal").append($("<option>").text("Område").val("Område").attr('Typ', 3));
+    });
+    
+
     $(function () {
         $('#uppdateraKompetens').click(function () {
             $('#modal-container').modal('hide');
@@ -53,6 +136,7 @@
 
         $('#Doldkonsultnamn').val(sessionStorage.getItem('konsult'));
         $("#Doldkonsult").hide();
+        
 
     });
 </script>

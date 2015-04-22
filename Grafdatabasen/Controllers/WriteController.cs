@@ -175,6 +175,12 @@ namespace Grafdatabasen.Controllers
             return RedirectToAction("uppdrag");
         }
 
+        public ActionResult showRemoveKompetens()
+        {
+            AddKompetensViewModel vm = new AddKompetensViewModel();
+            return PartialView("_RemoveKompetensPartial", vm);
+        }
+
 
         public ActionResult showPartialKompetens()
         {
@@ -187,7 +193,7 @@ namespace Grafdatabasen.Controllers
         {
             var nyKompetens = new Kompetens { Namn = vm.Namn, Beskrivning = vm.Beskrivning, Typ = vm.Kompetenstyp };
             WebApiConfig.GraphClient.Cypher
-                .Merge("(kompetens:Kompetens { Namn: {Namn} })")
+                .Merge("(kompetens:Kompetens:" + vm.Kompetenstyp + " { Namn: {Namn} })")
                 .Set("kompetens = {nyKompetens}")
                 .WithParams(new
                 {
@@ -201,10 +207,22 @@ namespace Grafdatabasen.Controllers
                 .Match("(kompetens:Kompetens)", "(konsult:Konsult)")
                 .Where((Kompetens kompetens) => kompetens.Namn == vm.Namn)
                 .AndWhere((Konsult konsult) => konsult.Namn == vm.Konsult)
-                .CreateUnique("konsult-[:KAN]->kompetens")
+                .CreateUnique("konsult-[:KAN{Niva:'" + vm.Niva + "'}]->kompetens")
                 .ExecuteWithoutResults();
             return RedirectToAction("konsult");
         }
 
+
+        [HttpPost]
+        public ActionResult RemoveKompetens(AddKompetensViewModel vm)
+        {
+            WebApiConfig.GraphClient.Cypher
+                .Match("(kompetens:Kompetens)<-[r:KAN]-(konsult:Konsult)")
+                .Where((Kompetens kompetens) => kompetens.Namn == vm.Namn)
+                .AndWhere((Konsult konsult) => konsult.Namn == vm.Konsult)
+                .Delete("r")
+                .ExecuteWithoutResults();
+            return RedirectToAction("konsult");
+        }
     }
 }

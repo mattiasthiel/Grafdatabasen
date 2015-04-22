@@ -1,0 +1,72 @@
+﻿
+@model Grafdatabasen.ViewModels.AddKompetensViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Stäng</span></button>
+    <h4 class="modal-title text-center" id="modalHeader">TA BORT kompetens:</h4>
+</div>
+@using (Html.BeginForm("RemoveKompetens", "Write", FormMethod.Post))
+{
+    <div class="modal-body">
+        <div class="col-md-12">
+            <div class="form-horizontal">
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                    <div class="col-md-5" id="KompetensNamn">
+                        @{
+                            List<SelectListItem> listItem2 = new List<SelectListItem>();
+                        }
+                        @Html.DropDownListFor(m => m.Kompetenstyp, listItem2, new { @id = "NamnModal", @class = "form-control" })
+                    </div>
+                    
+                </div>
+
+                <div class="form-group form-group-sm" id="Doldkonsult">
+                    @Html.LabelFor(m => m.Konsult, new { @class = "control-label col-md-1" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(m => m.Konsult, new { htmlAttributes = new { @id = "Doldkonsultnamn", @class = "form-control", @placeholder = "Beskrivning:", @Styles = "height: 40px" } })
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="submit" value="TA BORT" onclick="location.href='@Url.Action("RemoveKompetens", "Write")'" class="btn btn-sm btn-primary" />
+
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var temp = $.parseJSON(sessionStorage.getItem('graph2'));
+        temp.forEach(function (row) {
+            row.graph.nodes.forEach(function (e) {
+                e.labels.forEach(function (n) {
+                    if (n == "Kompetens") {
+                        $("#NamnModal").append($("<option>").text(e.properties.Namn).val(e.properties.Namn).attr('Namn', e.id));
+                    }
+                })
+                
+            })
+        });
+    });
+
+
+
+
+    $(function () {
+        $('#uppdateraKompetens').click(function () {
+            $('#modal-container').modal('hide');
+        });
+    });
+    $(document).ready(function () {
+
+        $('#Doldkonsultnamn').val(sessionStorage.getItem('konsult'));
+        $("#Doldkonsult").hide();
+
+
+    });
+</script>
+

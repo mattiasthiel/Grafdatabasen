@@ -13,6 +13,7 @@ namespace Grafdatabasen.ViewModels
         public string Namn { get; set; }
 
         public string Beskrivning { get; set; }
+        public int Niva { get; set; }
 
     }
 }
