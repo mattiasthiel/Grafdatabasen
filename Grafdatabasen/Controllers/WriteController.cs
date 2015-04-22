@@ -217,7 +217,7 @@ namespace Grafdatabasen.Controllers
         public ActionResult RemoveKompetens(AddKompetensViewModel vm)
         {
             WebApiConfig.GraphClient.Cypher
-                .Match("(kompetens:Kompetens)<-[r:KAN]-(konsult:Konsult)")
+                .OptionalMatch("(konsult:Konsult)-[r]->(kompetens:Kompetens)")
                 .Where((Kompetens kompetens) => kompetens.Namn == vm.Namn)
                 .AndWhere((Konsult konsult) => konsult.Namn == vm.Konsult)
                 .Delete("r")
