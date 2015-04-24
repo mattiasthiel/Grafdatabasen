@@ -141,7 +141,7 @@
         }
 
         $(function() {
-            ajaxneo4j("match (n)-[KAN]->(m) return distinct m.Namn").responseJSON.results[0].data.forEach(function (n) {
+            ajaxneo4j("match (n)-[:KAN]->(m) return distinct m.Namn").responseJSON.results[0].data.forEach(function (n) {
                 KAN.push({Text: n.row[0] ,Value: n.row[0]});
             });
         })
