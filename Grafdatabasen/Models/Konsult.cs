@@ -20,6 +20,7 @@ namespace Grafdatabasen.Models
         public string Link { get; set; }
 
         public string Kontor { get; set; }
+        public string Niva { get; set; }
 
         public virtual List<Metod> Metoder { get; set; }
 

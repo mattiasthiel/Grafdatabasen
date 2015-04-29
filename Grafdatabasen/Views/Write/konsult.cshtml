@@ -34,6 +34,12 @@
                                 <div class="col-md-4">
                                     @{
                                         List<SelectListItem> listItem = new List<SelectListItem>();
+                                        foreach (var item in Model.Konsulter.OrderBy(d => d.Namn))
+                                        {
+                                            listItem.Add(new SelectListItem { Text = item.Namn });
+                                        }
+                                        
+
                                     }
                                     @Html.DropDownListFor(m => m.Namn, listItem, "Välj konsult", new { @id = "KonsultNamn", @class = "form-control" })
 
@@ -72,7 +78,7 @@
                             <div class="form-group">
                                 @Html.LabelFor(m => m.Beskrivning, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @id = "Beskrivning", @class = "form-control", @placeholder = "Beskrivning:" } })
+                                    @Html.EditorFor(m => m.Beskrivning, new { htmlAttributes = new { @id = "BeskrivningKonsult", @class = "form-control", @placeholder = "Beskrivning:" } })
                                 </div>
                                 <div class="col-md-6">
                                     <div class="panel panel-default " id="divKompetenser">
@@ -85,21 +91,9 @@
 
                                         </div>
                                         <!-- Table -->
-                                        @using (Html.BeginForm("Tabort", "Write"))
-                                        { 
-                                        <table id="listaKompetenser" class="table table-striped table-hover ">
-                                            <thead>
-                                                <tr>
-                                                    <th>Typ</th>
-                                                    <th style="font-weight:300">Kompetens</th>
-                                                    <th>Nivå</th>
-                                                    <th>Ta bort</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                        }
+                                        
+                                        @Html.Partial("_KompetensTabellPartial")
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -205,6 +199,7 @@
     var graph = ajaxneo4j("match path= (n)-[r]-() return path");
     sessionStorage.setItem('graph', JSON.stringify(graph.responseJSON.results[0].data));
 
+    /* JAVASCRIPT FÖR ATT POPULERA KONSULT DROPDOWNLISTAN
     //the helper function provided by neo4j documents
     $(document).ready(function () {
         var temp = $.parseJSON(sessionStorage.getItem('nodes'));
@@ -215,10 +210,42 @@
 
         });
     });
+    */
 </script>
 
 <script type="text/javascript">
+    $(document).ready(function () {
+        $("#KonsultNamn").change(function () {
+            var valdKonsult = { Namn: $("#KonsultNamn").val() };
+            
+            $.ajax({
+                url: '@Url.Action("GeKonsultInfo", "Write")',
+                type: 'Post',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(valdKonsult),
+                success: function (data) {
+                    
+                    if (data.success) {
+                        $('#Titel:text').val(data.result[0].Konsult.Titel);
+                        $('#Epost:text').val(data.result[0].Konsult.Epost);
+                        $('#Telefon:text').val(data.result[0].Konsult.Telefonnummer);
+                        $('#Link:text').val(data.result[0].Konsult.Link);
+                        $('#Kontor:text').val(data.result[0].Konsult.Kontor);
+                        $('#BeskrivningKonsult').val(data.result[0].Konsult.Beskrivning);
+                    }
+                    else {
+                        alert('invalid ID' + data.success);
+                    }
+                }
+            });
+        });
+    });
 
+
+
+
+/*
     $('#KonsultNamn').change(function () {
         var tempNamn = $('#KonsultNamn option:selected').text();
 
@@ -227,21 +254,23 @@
 
         var temp = $.parseJSON(sessionStorage.getItem('nodes'));
         var temp2 = $.parseJSON(sessionStorage.getItem('graph2'));
-
         temp.forEach(function (row) {
             if (tempNamn == row.graph.nodes[0].properties.Namn) {
+                console.log(row.graph.nodes[0].properties.Beskrivning);
                 sessionStorage.setItem('konsult', $('#KonsultNamn').val());
                 $('#Titel:text').val(row.graph.nodes[0].properties.Titel);
                 $('#Epost:text').val(row.graph.nodes[0].properties.Epost);
                 $('#Telefon:text').val(row.graph.nodes[0].properties.Telefonnummer);
                 $('#Link:text').val(row.graph.nodes[0].properties.Link);
                 $('#Kontor:text').val(row.graph.nodes[0].properties.Kontor);
-                $('#Beskrivning:text').val(row.graph.nodes[0].properties.Beskrivning);
+                $('#BeskrivningKonsult').val(row.graph.nodes[0].properties.Beskrivning);
             }
         })
         $('table#listaKompetenser TBODY').empty();
         temp2.forEach(function (row) {
             row.graph.nodes.forEach(function(e){
+                console.log(e);
+
                 e.labels.forEach(function(n){
                     if (n == "Kompetens"){
                         $('table#listaKompetenser TBODY').append('<tr><td><span class="glyphicon glyphicon-sd-video" aria-hidden="true"></span></td><td>' + e.properties.Namn + '</td><td>' + row.graph.relationships[0].properties.Niva + '</td><td><a href=</td></tr>');
@@ -253,10 +282,10 @@
             row.graph.nodes.forEach(function (n) {
                 if (n.labels == "Kompetens") {
                 }
-            })*/
+            })
     });
 
-/*   $("#divKompetenser").hide();
+   $("#divKompetenser").hide();
     $("#divUtbildning").hide();
     $("#divAnstallning").hide();
 
@@ -268,6 +297,7 @@
             $("#divAnstallning").show();
 
         });
-    });*/
+    });
+*/
 </script>
 

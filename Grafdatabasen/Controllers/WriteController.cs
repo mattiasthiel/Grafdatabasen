@@ -68,8 +68,42 @@ namespace Grafdatabasen.Controllers
         public ActionResult konsult()
         {
             ViewBag.Message = "Lägg till/ändra konsult";
+            var result = WebApiConfig.GraphClient.Cypher
+                .OptionalMatch("(konsult:Konsult)")
+                //.Where((Konsult konsult) => konsult.Namn == "")
+                //.AndWhere((Kompetens kompetens) => kompetens.Namn == "")
+                .Return((konsult) => new
+                {
+                    Konsult = konsult.As<Konsult>()
+                })
+                .Results;
+            List<Konsult> konsulter = new List<Konsult>();
+
+            foreach (var item in result) {
+                konsulter.Add(item.Konsult);
+            }
+
             AddKonsultViewModel vm = new AddKonsultViewModel();
+            vm.Konsulter = konsulter.ToList();
+            
             return View(vm);
+        }
+
+        public JsonResult GeKonsultInfo(string Namn)
+        {
+
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(konsult:Konsult)")
+                .Where((Konsult konsult) => konsult.Namn == Namn)
+                .OptionalMatch("(konsult:Konsult)-[r:KAN]-(kompetens:Kompetens)")
+                .Return((konsult, kompetens, r) => new
+                {
+                    Konsult = konsult.As<Konsult>(),
+                    Kompetens = kompetens.As<Kompetens>(),
+                    Niva = r.As<Konsult>()
+                })
+                .Results;
+            return Json(new { success = true, result });
         }
         [HttpPost]
         public ActionResult konsult(AddKonsultViewModel vm)
@@ -209,6 +243,7 @@ namespace Grafdatabasen.Controllers
                 .AndWhere((Konsult konsult) => konsult.Namn == vm.Konsult)
                 .CreateUnique("konsult-[:KAN{Niva:'" + vm.Niva + "'}]->kompetens")
                 .ExecuteWithoutResults();
+            
             return RedirectToAction("konsult");
         }
 

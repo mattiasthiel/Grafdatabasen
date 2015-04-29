@@ -114,6 +114,7 @@
                 populateSelect("#lista1", "#lista2");
                 $('#som1 span').text("     som... ");
                 $( "#lista2" ).show();
+                $('#lista3').empty();
             });
         });
 
@@ -132,7 +133,7 @@
 
         function populateSelect(x, y){
             var listval=$(x).val();
-            //$(y).html('');
+            $(y).empty();
             eval(listval).forEach(function(t) { 
                 if(t.Text !== null){ 
                     $(y).append($("<option />").text(t.Text).val(t.Value));
@@ -141,7 +142,7 @@
         }
 
         $(function() {
-            ajaxneo4j("match (n)-[KAN]->(m) return distinct m.Namn").responseJSON.results[0].data.forEach(function (n) {
+            ajaxneo4j("match (n)-[:KAN]->(m) return distinct m.Namn").responseJSON.results[0].data.forEach(function (n) {
                 KAN.push({Text: n.row[0] ,Value: n.row[0]});
             });
         })

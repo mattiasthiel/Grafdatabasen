@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Lägg till/ändra uppdrag";
 }
+
 <div class="row">
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -227,7 +228,6 @@
         data: JSON.stringify(query),
         //now pass a callback to success to do something with the data
         success: function (data) {
-
             var nodes = [], links = [];
             // parsing the output of neo4j rest api
             data.results[0].data.forEach(function (row) {
@@ -237,6 +237,7 @@
                             states.push(n.properties.Namn);
                         }
                         if (n.labels == "Kund") {
+                            console.log(n);
                             $("#KundId").append($("<option>").text(n.properties.Namn).val(n.properties.Namn).attr('KundId', n.id));
                         }
                         if (n.labels == "Bestallare") {

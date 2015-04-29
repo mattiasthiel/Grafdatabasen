@@ -39,5 +39,7 @@ namespace Grafdatabasen.ViewModels
 
         public virtual List<Uppgift> Uppgifter { get; set; }
 
+        public virtual List<Konsult> Konsulter { get; set; }
+
     }
 }

@@ -102,7 +102,7 @@
             y.results[0].data.forEach(function (row) {
                 row.graph.nodes.forEach(function (n) {
                     if (idIndex(nodes, n.id) == null) {
-                        nodes.push({ id: n.id, label: n.labels[0], title: n.properties.name });
+                        nodes.push({ id: n.id, label: n.labels[0], title: n.properties.Namn });
                     }
                 });
                 links = links.concat(row.graph.relationships.map(function (r) {
@@ -149,7 +149,7 @@
                     var size;
                     switch (d.label) {
                         case "Konsult":
-                            radius = 30;
+                            radius = 10;
                             break;
                         case "Uppdrag":
                         case "Kund":
