@@ -46,7 +46,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <input type="submit" value="Spara" onclick="location.href='@Url.Action("AddKompetens", "Write")'" class="btn btn-sm btn-primary" />
+    <input type="submit" value="Spara" onclick="location.href='@Url.Action("AddKompetens", "Write", null)'" id="sparaKnapp" class="btn btn-sm btn-primary" />
 
 </div>
 }
@@ -133,11 +133,18 @@
         });
     });
     $(document).ready(function () {
+        $('#sparaKnapp').click(function(e){
+            //e.preventDefault();
+            $.ajax({
 
-        $('#Doldkonsultnamn').val(sessionStorage.getItem('konsult'));
-        $("#Doldkonsult").hide();
+                url:$(this).attr("href"),
+                success: function(){
+                alert("Value Added");  // or any other indication if you want to show
+            }
+        });
         
-
+        });
+    
     });
 </script>
 

@@ -85,14 +85,14 @@
                                         <!-- Default panel contents -->
                                         <div class="panel-heading clearfix">
                                             <h5 class="panel-title pull-left" style="padding-top: 5px;">Kompetenser:</h5>
-                                            @Html.ActionLink("Lägg till kompetens ", "showPartialKompetens", "Write", new { @class = "modal-link btn btn-default btn-sm pull-right" })
+                                            @Html.ActionLink("Lägg till kompetens ", "showPartialKompetens", "Write", new { @class = "modal-link btn btn-default btn-sm pull-right", @id = "AddKompetensKnapp" })
                                             @Html.ActionLink("TA BORT kompetens ", "showRemoveKompetens", "Write", new { @class = "modal-link btn btn-default btn-sm pull-right" })
 
 
                                         </div>
                                         <!-- Table -->
                                         
-                                        @Html.Partial("_KompetensTabellPartial")
+                                        @{Html.RenderPartial("_KompetensTabellPartial");}
                                         
                                     </div>
                                 </div>
@@ -225,7 +225,8 @@
                 dataType: 'json',
                 data: JSON.stringify(valdKonsult),
                 success: function (data) {
-                    
+                    $('table#listaKompetenser TBODY').empty();
+
                     if (data.success) {
                         $('#Titel:text').val(data.result[0].Konsult.Titel);
                         $('#Epost:text').val(data.result[0].Konsult.Epost);
@@ -233,6 +234,11 @@
                         $('#Link:text').val(data.result[0].Konsult.Link);
                         $('#Kontor:text').val(data.result[0].Konsult.Kontor);
                         $('#BeskrivningKonsult').val(data.result[0].Konsult.Beskrivning);
+                        data.result.forEach(function (e) {
+                            console.log(e);
+                            $('table#listaKompetenser TBODY').append('<tr><td><span class="glyphicon glyphicon-sd-video" aria-hidden="true"></span></td><td>' + e.Kompetens.Namn + '</td><td>' + e.Niva.Niva + '</td><td><a href=</td></tr>');
+
+                        })
                     }
                     else {
                         alert('invalid ID' + data.success);
