@@ -1,10 +1,14 @@
 ﻿@model IEnumerable<Grafdatabasen.ViewModels.AddKompetensViewModel>
 
-
+ 
 
 <div class="row">
     <p>&nbsp;</p>
+    <p>
 
+        @Html.ActionLink("Lägg till ny Kompetens", "AddKompetens", routeValues: new { Konsult = ViewBag.Konsult })
+        
+    </p>
 
     <table class="table customer">
         @*Headers*@
@@ -14,6 +18,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Beskrivning)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Niva)
             </th>
         </tr>
 
@@ -28,8 +35,11 @@
                     @Html.DisplayFor(c => item.Beskrivning)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "showPartialKompetens", "Write", routeValues: new { Kompetens = item.Namn, Konsult = item.Konsult}, htmlAttributes: new { @class = "modal-link btn btn-default btn-sm pull-right" }) |
-                    @Html.ActionLink("Delete", "Delete", new { Namn = item.Namn })
+                    @Html.DisplayFor(c => item.Niva)
+                </td>
+                <td>
+                    @Html.ActionLink("Ändra", "showPartialKompetens", "Write", routeValues: new { Kompetens = item.Namn, Konsult = item.Konsult}, htmlAttributes: new { @class = "modal-link btn btn-default btn-sm pull-right" }) |
+                    @Html.ActionLink("Ta bort", "RemoveKompetens", routeValues: new { Kompetens = item.Namn, Konsult = item.Konsult }, htmlAttributes: new { @class = "btn btn-default btn-sm pull-right" })
                 </td>
             </tr>
         }

@@ -41,7 +41,7 @@ namespace Grafdatabasen.Controllers
 
             return View();
         }
-        
+
 
         public ActionResult kompetens()
         {
@@ -82,7 +82,8 @@ namespace Grafdatabasen.Controllers
                 .Results;
             List<AddKonsultViewModel> listaKonsulter = new List<AddKonsultViewModel>();
             //AddKonsultViewModel vm = new AddKonsultViewModel();
-            foreach (var item in result) {
+            foreach (var item in result)
+            {
                 List<AddKompetensViewModel> listaKompetenser = new List<AddKompetensViewModel>();
                 AddKonsultViewModel konsult = new AddKonsultViewModel();
                 konsult.Namn = item.Konsult.Namn;
@@ -113,20 +114,18 @@ namespace Grafdatabasen.Controllers
                     Konsult = konsult.As<Konsult>(),
                     Kompetens = kompetens.CollectAs<Kompetens>(),
                     Niva = r.As<Kompetens>().Niva
-                    
+
                 })
                 .Results;
             AddKonsultViewModel editKonsult = new AddKonsultViewModel();
+            List<AddKompetensViewModel> listaKompetenser = new List<AddKompetensViewModel>();
+
             foreach (var item in result)
             {
-                List<AddKompetensViewModel> listaKompetenser = new List<AddKompetensViewModel>();
-
                 editKonsult.Namn = item.Konsult.Namn;
                 editKonsult.Kontor = item.Konsult.Kontor;
                 editKonsult.Telefon = item.Konsult.Telefonnummer;
                 editKonsult.Epost = item.Konsult.Epost;
-                
-
                 foreach (var n in item.Kompetens)
                 {
                     AddKompetensViewModel kompetens = new AddKompetensViewModel();
@@ -137,13 +136,12 @@ namespace Grafdatabasen.Controllers
                     listaKompetenser.Add(kompetens);
                     //konsult.Kompetens.Add(kompetens);
                 }
-                editKonsult.Kompetens = listaKompetenser;
-
             }
+            editKonsult.Kompetens = listaKompetenser;
             return View(editKonsult);
         }
 
-        
+
         public ActionResult EditKompetens(string Namn, string Konsult, int Niva)
         {
             WebApiConfig.GraphClient.Cypher
@@ -155,11 +153,24 @@ namespace Grafdatabasen.Controllers
                 .ExecuteWithoutResults();
             return RedirectToAction("EditKonsult", "Write", routeValues: new { Namn = Konsult });
         }
-         
+
+
+        public ActionResult RemoveKompetens(string Kompetens, string Konsult)
+        {
+            WebApiConfig.GraphClient.Cypher
+                .OptionalMatch("(konsult:Konsult)-[r]->(kompetens:Kompetens)")
+                .Where((Kompetens kompetens) => kompetens.Namn == Kompetens)
+                .AndWhere((Konsult konsult) => konsult.Namn == Konsult)
+                .Delete("r")
+                .ExecuteWithoutResults();
+            return RedirectToAction("EditKonsult", "Write", routeValues: new { Namn = Konsult });
+        }
+
+
 
         public JsonResult GeKonsultInfo(string Namn)
         {
-            
+
             var result = WebApiConfig.GraphClient.Cypher
                 .Match("(konsult:Konsult)")
                 .Where((Konsult konsult) => konsult.Namn == Namn)
@@ -188,7 +199,7 @@ namespace Grafdatabasen.Controllers
                 Beskrivning = vm.Beskrivning
             };
             var nyttKontor = new Kontor { Namn = vm.Kontor };
-            
+
             WebApiConfig.GraphClient.Cypher
                 .Merge("(konsult:Konsult { Namn: {Namn} })")
                 .Set("konsult = {nyKonsult}")
@@ -242,11 +253,26 @@ namespace Grafdatabasen.Controllers
         [HttpPost]
         public ActionResult SkapaNyKund(AddKundViewModel vm)
         {
-            var nyKund = new Kund { Namn = vm.Namn, Adress = vm.Adress
-                , Postadress = vm.Postadress, Kategori = vm.Kategori
-                , Marknadssegment = vm.Segment, Telefon = vm.Telefon };
-            var nyBestallare = new Bestallare { Namn = vm.Kontakt, Avdelning = vm.Avdelning
-                , Epost = vm.Epost, Konto = vm.Konto, Telefon = vm.Telefon};
+            var nyKund = new Kund
+            {
+                Namn = vm.Namn,
+                Adress = vm.Adress
+                ,
+                Postadress = vm.Postadress,
+                Kategori = vm.Kategori
+                ,
+                Marknadssegment = vm.Segment,
+                Telefon = vm.Telefon
+            };
+            var nyBestallare = new Bestallare
+            {
+                Namn = vm.Kontakt,
+                Avdelning = vm.Avdelning
+                ,
+                Epost = vm.Epost,
+                Konto = vm.Konto,
+                Telefon = vm.Telefon
+            };
             WebApiConfig.GraphClient.Cypher
                 .Merge("(kund:Kund { Namn: {Namn} })")
                 .Set("kund = {nyKund}")
@@ -311,7 +337,7 @@ namespace Grafdatabasen.Controllers
             return PartialView("_AddKompetensPartial", vm);
         }
 
-        
+
         //[HttpPost]
         public ActionResult AddKompetens(AddKompetensViewModel vm)
         {
@@ -326,7 +352,7 @@ namespace Grafdatabasen.Controllers
 
                 })
                 .ExecuteWithoutResults();
-            
+
 
             WebApiConfig.GraphClient.Cypher
                 .Match("(kompetens:Kompetens)", "(konsult:Konsult)")
@@ -335,21 +361,7 @@ namespace Grafdatabasen.Controllers
                 .CreateUnique("konsult-[:KAN{Niva:'" + vm.Niva + "'}]->kompetens")
                 .ExecuteWithoutResults();
 
-            return RedirectToAction("konsult", "Write", new { Id = vm.Konsult});
-        }
-
-
-        [HttpPost]
-        public ActionResult RemoveKompetens(AddKompetensViewModel vm)
-        {
-            ViewBag.Konsult = vm.Konsult;
-            WebApiConfig.GraphClient.Cypher
-                .OptionalMatch("(konsult:Konsult)-[r]->(kompetens:Kompetens)")
-                .Where((Kompetens kompetens) => kompetens.Namn == vm.Namn)
-                .AndWhere((Konsult konsult) => konsult.Namn == vm.Konsult)
-                .Delete("r")
-                .ExecuteWithoutResults();
-            return RedirectToAction("konsult");
+            return RedirectToAction("konsult", "Write", new { Id = vm.Konsult });
         }
     }
 }
