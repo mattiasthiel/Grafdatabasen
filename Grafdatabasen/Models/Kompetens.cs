@@ -10,5 +10,6 @@ namespace Grafdatabasen.Models
         public string Namn { get; set; }
         public string Typ { get; set; }
         public string Beskrivning { get; set; }
+        public int Niva { get; set; }
     }
 }

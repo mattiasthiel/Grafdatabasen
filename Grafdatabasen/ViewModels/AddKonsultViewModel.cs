@@ -25,7 +25,7 @@ namespace Grafdatabasen.ViewModels
 
         public string Kontor { get; set; }
 
-        //public virtual List<Kompetens> Kompetens { get; set; }
+        public virtual List<AddKompetensViewModel> Kompetens { get; set; }
 
         //public virtual List<Teknik> Tekniker { get; set; }
 
@@ -39,7 +39,7 @@ namespace Grafdatabasen.ViewModels
 
         //public virtual List<Uppgift> Uppgifter { get; set; }
 
-        public virtual List<Konsult> Konsulter { get; set; }
+        //public virtual List<Konsult> Konsulter { get; set; }
 
     }
 }

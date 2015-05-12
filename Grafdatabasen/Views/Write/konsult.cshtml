@@ -19,37 +19,87 @@
     <div class="tab-content">
         <div id="konsult">
 
-            @model Grafdatabasen.ViewModels.AddKonsultViewModel
+            @model IEnumerable<Grafdatabasen.ViewModels.AddKonsultViewModel>
 
 
             <div class="row">
                 <p>&nbsp;</p>
-                @using (Html.BeginForm())
-                {
+                
+
+                    <table class="table customer">
+                        @*Headers*@
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Namn)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Epost)
+                            </th>
+                            <th>
+                                @Html.DisplayName("Kompetens")
+                            </th>
+                            <th>
+                                @Html.DisplayName("Utbildning")
+                            </th>
+                            <th></th>
+                        </tr>
+
+                        @*Konsult Data*@
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(c => item.Namn)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(c => item.Epost)
+                                </td>
+                                <td>
+                                    @Html.Partial("_KompetensTabellPartial", item.Kompetens) 
+                                </td>
+                                <td>
+                                   @* @Html.Partial("_CustomerAddressDetails", item.Titel) *@
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "EditKonsult", new { Namn = item.Namn }) |
+                                    @Html.ActionLink("Details", "Details", new { id = item.Namn }) |
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.Namn })
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+
+
+
+
+                    @* 
                     <div class="col-md-12">
                         <div class="form-horizontal">
 
                             <div class="form-group form-group-sm">
                                 @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
                                 <div class="col-md-4">
-                                    @{
-                                        List<SelectListItem> listItem = new List<SelectListItem>();
-                                        foreach (var item in Model.Konsulter.OrderBy(d => d.Namn))
-                                        {
-                                            listItem.Add(new SelectListItem { Text = item.Namn });
-                                        }
-                                        
+                                    @*
+    @{
+        List<SelectListItem> listItem = new List<SelectListItem>();
+        foreach (var item in Model.Konsulter.OrderBy(d => d.Namn))
+        {
+            listItem.Add(new SelectListItem { Text = item.Namn });
+        }
 
-                                    }
-                                    @Html.DropDownListFor(m => m.Namn, listItem, "Välj konsult", new { @id = "KonsultNamn", @class = "form-control" })
 
-                                </div>
+    }
+    @Html.DropDownListFor(m => m.Namn, listItem, "Välj konsult", new { @id = "KonsultNamn", @class = "form-control" })
+                                    
+                                    @Html.DropDownList("Konsulter", "--Välj--")
+                                        </div>
                                 <div class="col-md-1">
                                     @Html.ActionLink("Ny konsult", "showPartialKonsult", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
                                 </div>
                                 @Html.LabelFor(m => m.Titel, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
-                                    @Html.EditorFor(m => m.Titel, new { htmlAttributes = new { @id = "Titel", @class = "form-control", placeholder = "Titel:" } })
+                                    @Html.EditorFor(m => m.Konsulter, new { htmlAttributes = new { @id = "Titel", @class = "form-control", placeholder = "Titel:" } })
                                 </div>
                             </div>
 
@@ -71,7 +121,6 @@
                                 @Html.LabelFor(m => m.Kontor, new { @class = "control-label col-md-1" })
                                 <div class="col-md-5">
                                     @Html.EditorFor(m => m.Kontor, new { htmlAttributes = new { @id = "Kontor", @class = "form-control", placeholder = "Kontor:" } })
-                                    @*@Html.ValidationMessageFor(m => m.valtKontor)*@
                                 </div>
                             </div>
 
@@ -186,8 +235,8 @@
 
                         </div>
                     </div>
-
-                }
+                    *@
+                
             </div>
         </div>
 
@@ -214,10 +263,9 @@
 </script>
 
 <script type="text/javascript">
+
     $(document).ready(function () {
-        $("#KonsultNamn").change(function () {
-            var valdKonsult = { Namn: $("#KonsultNamn").val() };
-            
+        function UppdateraInfo(valdKonsult) {
             $.ajax({
                 url: '@Url.Action("GeKonsultInfo", "Write")',
                 type: 'Post',
@@ -245,8 +293,18 @@
                     }
                 }
             });
+        };
+        var valdKonsulten = { Namn: $("#Konsulter").val() };
+        UppdateraInfo(valdKonsulten)
+
+        $("#Konsulter").change(function () {
+            var valdKonsult = { Namn: $("#Konsulter").val() };
+
+            UppdateraInfo(valdKonsult);
         });
     });
+
+
 
 
 
@@ -307,3 +365,4 @@
 */
 </script>
 
+    

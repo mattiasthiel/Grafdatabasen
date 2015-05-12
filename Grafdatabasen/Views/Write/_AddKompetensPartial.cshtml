@@ -2,18 +2,49 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Stäng</span></button>
-    <h4 class="modal-title text-center" id="modalHeader">Lägg till kompetens:</h4>
+    <h4 class="modal-title text-center" id="modalHeader">Ändra kompetens:</h4>
 </div>
-@using (Html.BeginForm("AddKompetens", "Write", FormMethod.Post))
+@using (Html.BeginForm("EditKompetens", "Write", FormMethod.Post))
 {
 <div class="modal-body">
     <div class="col-md-12">
         <div class="form-horizontal">
 
+            <div>
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(m => m.Namn)
+                    </dt>
+                    <dd>
+                        @Html.DisplayTextFor(m => m.Namn)
+                        @Html.HiddenFor(m => m.Namn)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(m => m.Kompetenstyp)
+                    </dt>
+                    <dd>
+                        @Html.DisplayTextFor(m => m.Kompetenstyp)
+                        @Html.HiddenFor(m => m.Konsult)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(m => m.Beskrivning)
+                    </dt>
+                    <dd>
+                        @Html.DisplayTextFor(m => m.Beskrivning)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(m => m.Niva)
+                    </dt>
+                    <dd>
+                        @Html.EditorFor(m => m.Niva, new { htmlAttributes = new { @class = "form-control", @placeholder = "Nivå:", @Styles = "height: 40px" } })
+                    </dd>
+                </dl>
+            </div>
+    @*
             <div class="form-group form-group-sm">
-                @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
+                @Html.DisplayNameFor(m => m.Namn)
                 <div class="col-md-5" id="KompetensNamn">
-                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control typeahead", @placeholder = "Namn:" } })
+                    @Html.DisplayTextFor(m => m.Namn )
                 </div>
                 @Html.LabelFor(m => m.Kompetenstyp, new { @class = "control-label col-md-1" })
                 <div class="col-md-5">
@@ -41,12 +72,12 @@
                 </div>
             </div>
 
-
+        *@
         </div>
     </div>
 </div>
 <div class="modal-footer">
-    <input type="submit" value="Spara" onclick="location.href='@Url.Action("AddKompetens", "Write", null)'" id="sparaKnapp" class="btn btn-sm btn-primary" />
+    <input type="submit" value="Spara" onclick="location.href='@Url.Action("EditKompetens", "Write", null)'" id="sparaKnapp" class="btn btn-sm btn-primary" />
 
 </div>
 }
@@ -131,20 +162,6 @@
         $('#uppdateraKompetens').click(function () {
             $('#modal-container').modal('hide');
         });
-    });
-    $(document).ready(function () {
-        $('#sparaKnapp').click(function(e){
-            //e.preventDefault();
-            $.ajax({
-
-                url:$(this).attr("href"),
-                success: function(){
-                alert("Value Added");  // or any other indication if you want to show
-            }
-        });
-        
-        });
-    
     });
 </script>
 

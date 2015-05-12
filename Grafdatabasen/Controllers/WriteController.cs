@@ -65,10 +65,11 @@ namespace Grafdatabasen.Controllers
             return View();
         }
 
-        public ActionResult konsult()
+        public ActionResult konsult(string Id = "")
         {
             ViewBag.Message = "Lägg till/ändra konsult";
             var result = WebApiConfig.GraphClient.Cypher
+                .Match("(konsult:Konsult)")
                 .OptionalMatch("(konsult:Konsult)-[:KAN]-(kompetens:Kompetens)")
                 //.Where((Konsult konsult) => konsult.Namn == "")
                 //.AndWhere((Kompetens kompetens) => kompetens.Namn == "")
@@ -77,24 +78,84 @@ namespace Grafdatabasen.Controllers
                     Konsult = konsult.As<Konsult>(),
                     Kompetens = kompetens.CollectAs<Kompetens>()
                 })
+                .OrderBy("Konsult.Namn")
                 .Results;
-            List<Konsult> konsulter = new List<Konsult>();
-            AddKonsultViewModel vm = new AddKonsultViewModel();
+            List<AddKonsultViewModel> listaKonsulter = new List<AddKonsultViewModel>();
+            //AddKonsultViewModel vm = new AddKonsultViewModel();
             foreach (var item in result) {
-                Konsult testKonsult = new Konsult();
-                List<Kompetens> lista = new List<Kompetens>();
-                testKonsult = item.Konsult;
+                List<AddKompetensViewModel> listaKompetenser = new List<AddKompetensViewModel>();
+                AddKonsultViewModel konsult = new AddKonsultViewModel();
+                konsult.Namn = item.Konsult.Namn;
                 foreach (var n in item.Kompetens)
                 {
-                    lista.Add(n.Data);
+                    AddKompetensViewModel kompetens = new AddKompetensViewModel();
+                    kompetens.Namn = n.Data.Namn;
+                    kompetens.Beskrivning = n.Data.Beskrivning;
+                    listaKompetenser.Add(kompetens);
+                    //konsult.Kompetens.Add(kompetens);
                 }
-                testKonsult.Kompetens = lista.ToList();
-                konsulter.Add(testKonsult);
+                konsult.Kompetens = listaKompetenser;
+                listaKonsulter.Add(konsult);
             }
-            vm.Konsulter = konsulter;
-            
-            return View(vm);
+            //vm = konsulter;
+            //ViewBag.Konsulter = new SelectList(konsulter, "Namn", "Namn", Id);
+            return View(listaKonsulter);
         }
+
+        public ActionResult EditKonsult(string Namn)
+        {
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(konsult:Konsult)")
+                .Where((Konsult konsult) => konsult.Namn == Namn)
+                .OptionalMatch("(konsult:Konsult)-[r:KAN]-(kompetens:Kompetens)")
+                .Return((konsult, kompetens, r) => new
+                {
+                    Konsult = konsult.As<Konsult>(),
+                    Kompetens = kompetens.CollectAs<Kompetens>(),
+                    Niva = r.As<Kompetens>().Niva
+                    
+                })
+                .Results;
+            AddKonsultViewModel editKonsult = new AddKonsultViewModel();
+            foreach (var item in result)
+            {
+                List<AddKompetensViewModel> listaKompetenser = new List<AddKompetensViewModel>();
+
+                editKonsult.Namn = item.Konsult.Namn;
+                editKonsult.Kontor = item.Konsult.Kontor;
+                editKonsult.Telefon = item.Konsult.Telefonnummer;
+                editKonsult.Epost = item.Konsult.Epost;
+                
+
+                foreach (var n in item.Kompetens)
+                {
+                    AddKompetensViewModel kompetens = new AddKompetensViewModel();
+                    kompetens.Namn = n.Data.Namn;
+                    kompetens.Beskrivning = n.Data.Beskrivning;
+                    kompetens.Niva = item.Niva;
+                    kompetens.Konsult = item.Konsult.Namn;
+                    listaKompetenser.Add(kompetens);
+                    //konsult.Kompetens.Add(kompetens);
+                }
+                editKonsult.Kompetens = listaKompetenser;
+
+            }
+            return View(editKonsult);
+        }
+
+        
+        public ActionResult EditKompetens(string Namn, string Konsult, int Niva)
+        {
+            WebApiConfig.GraphClient.Cypher
+                .OptionalMatch("(konsult:Konsult)-[r]->(kompetens:Kompetens)")
+                .Where((Kompetens kompetens) => kompetens.Namn == Namn)
+                .AndWhere((Konsult konsult) => konsult.Namn == Konsult)
+                .Set("r.Niva = {Niva} ")
+                .WithParam("Niva", Niva)
+                .ExecuteWithoutResults();
+            return RedirectToAction("EditKonsult", "Write", routeValues: new { Namn = Konsult });
+        }
+         
 
         public JsonResult GeKonsultInfo(string Namn)
         {
@@ -224,15 +285,35 @@ namespace Grafdatabasen.Controllers
         }
 
 
-        public ActionResult showPartialKompetens()
+        public ActionResult showPartialKompetens(string Kompetens, string Konsult)
         {
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(konsult:Konsult)-[r:KAN]-(kompetens:Kompetens)")
+                .Where((Konsult konsult) => konsult.Namn == Konsult)
+                .AndWhere((Kompetens kompetens) => kompetens.Namn == Kompetens)
+                .Return((konsult, kompetens, r) => new
+                {
+                    Konsult = konsult.As<Konsult>(),
+                    Kompetens = kompetens.As<Kompetens>(),
+                    Niva = r.As<Konsult>()
+                })
+                .Results;
+
             AddKompetensViewModel vm = new AddKompetensViewModel();
-            
+            foreach (var item in result)
+            {
+                vm.Konsult = item.Konsult.Namn;
+                vm.Namn = item.Kompetens.Namn;
+                vm.Kompetenstyp = item.Kompetens.Typ;
+                vm.Beskrivning = item.Kompetens.Beskrivning;
+                vm.Niva = item.Niva.Niva;
+            }
             return PartialView("_AddKompetensPartial", vm);
         }
 
+        
         //[HttpPost]
-        public void AddKompetens(AddKompetensViewModel vm)
+        public ActionResult AddKompetens(AddKompetensViewModel vm)
         {
             var nyKompetens = new Kompetens { Namn = vm.Namn, Beskrivning = vm.Beskrivning, Typ = vm.Kompetenstyp };
             WebApiConfig.GraphClient.Cypher
@@ -254,13 +335,14 @@ namespace Grafdatabasen.Controllers
                 .CreateUnique("konsult-[:KAN{Niva:'" + vm.Niva + "'}]->kompetens")
                 .ExecuteWithoutResults();
 
-            //return View();
+            return RedirectToAction("konsult", "Write", new { Id = vm.Konsult});
         }
 
 
         [HttpPost]
         public ActionResult RemoveKompetens(AddKompetensViewModel vm)
         {
+            ViewBag.Konsult = vm.Konsult;
             WebApiConfig.GraphClient.Cypher
                 .OptionalMatch("(konsult:Konsult)-[r]->(kompetens:Kompetens)")
                 .Where((Kompetens kompetens) => kompetens.Namn == vm.Namn)

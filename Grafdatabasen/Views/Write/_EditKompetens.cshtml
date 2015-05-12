@@ -27,6 +27,10 @@
                 <td>
                     @Html.DisplayFor(c => item.Beskrivning)
                 </td>
+                <td>
+                    @Html.ActionLink("Edit", "showPartialKompetens", "Write", routeValues: new { Kompetens = item.Namn, Konsult = item.Konsult}, htmlAttributes: new { @class = "modal-link btn btn-default btn-sm pull-right" }) |
+                    @Html.ActionLink("Delete", "Delete", new { Namn = item.Namn })
+                </td>
             </tr>
         }
     </table>

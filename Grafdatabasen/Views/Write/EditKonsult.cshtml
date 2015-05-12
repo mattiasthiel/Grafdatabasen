@@ -1,0 +1,54 @@
+﻿@model Grafdatabasen.ViewModels.AddKonsultViewModel
+
+@{
+    ViewBag.Title = "EditKonsult";
+}
+
+<h2>EditKonsult</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Namn, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Namn, new { @class = "form-control", disabled = "disabled", @readonly = "readonly" })
+                @Html.ValidationMessageFor(model => model.Namn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Epost, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Epost, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Epost, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Telefon, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Telefon, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Telefon, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        
+        <h4>Kompetenser:</h4>
+        @Html.Partial("_EditKompetens", Model.Kompetens)
+            
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "konsult")
+</div>
