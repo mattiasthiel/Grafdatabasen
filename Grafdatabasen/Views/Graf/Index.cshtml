@@ -17,10 +17,11 @@
     <div id="details" class="col-md-4 pull-right" hidden="hidden">
         <div class="panel panel-default" style="z-index:1000">
             <div class="panel-heading">
+                <button type="button" id="hide" class="close pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h3 class="panel-title">Detaljer</h3>
             </div>
             <div class="panel-body">
-                Detaljer
+                <div id="detailContent"></div>
             </div>
         </div>
 
@@ -28,6 +29,7 @@
 </div>
 
 <style>
+    #details {margin-top: 80px;}
     circle {
         stroke-width: 1.5px;
     }
@@ -85,6 +87,8 @@
     $(document).ready(function () {
 
         var request = ajaxneo4j("match path= (n)-[r]-() return path");
+        //var request = ajaxneo4j("match path= (a:Konsult)-[r]->(b:Uppgift)-[s]->(c:Uppdrag)<-[t]-(d:Beställare)-[u]->(e:Kund) return path union all match (k:Konsult) return k");
+
 
         request.done(d3d3);
 
@@ -102,9 +106,14 @@
             y.results[0].data.forEach(function (row) {
                 row.graph.nodes.forEach(function (n) {
                     if (idIndex(nodes, n.id) == null) {
-
-
-                        nodes.push({ id: n.id, label: n.labels[0], title: n.properties.Namn });
+                        var property = [];
+                        for (var item in n.properties) {
+                            //console.log("<br>" + item + ": " + n.properties[item]);
+                            property.push("<br><strong>" + item + ": </strong>" + n.properties[item]);
+                        }
+                        console.log(property);
+                                                                                        //, props: n.property 
+                        nodes.push({ id: n.id, label: n.labels[0], title: n.properties.Namn, props: property });
 
                     }
                 });
@@ -116,17 +125,29 @@
             var graph = { nodes: nodes, links: links };
 
             // Now do something awesome with the graph!
-            var width = $(document).width(), height = $(document).height() - 100, radius = 12;
+            var width = $(document).width(), height = $(document).height() - 100, radius = 10;
 
             var color = d3.scale.category20();
 
+            var zoom = d3.behavior.zoom()
+                    .scaleExtent([0.5, 5])
+                    .on("zoom", zoomed);
+
+            var drag = d3.behavior.drag()
+                    .origin(function (d) { return d; })
+                    .on("dragstart", dragstarted)
+                    .on("drag", dragged)
+                    .on("dragend", dragended);
+
             var svg = d3.select("#visual").append("svg")
-                    .attr("width", width).attr("height", height);
+                    .attr("width", width).attr("height", height)
+                    .attr("pointer-events", "all")
+                    //.append("g")  // Om den är med kan man bara zooma och panorera med pekaren över noden.
+                    .call(zoom);
 
             var force = d3.layout.force()
-                    .gravity(.05)
+                    .gravity(.30)
                     .charge(-500)
-                    .linkDistance(20)
                     .size([width, height]);
 
             force
@@ -134,13 +155,15 @@
                 .links(graph.links)
                 .start();
 
-            var link = svg.selectAll(".link")
+            var container = svg.append("g");
+
+            var link = container.selectAll(".link")
                     .data(graph.links)
                     .enter()
                     .append("line")
                     .attr("class", "link");
 
-            var node = svg.selectAll(".node")
+            var node = container.selectAll(".node")
                     .data(graph.nodes)
                     .enter().append("g")
                     .call(force.drag);
@@ -153,26 +176,26 @@
                     switch (d.label) {
                         case "Konsult":
 
-                            radius = 20;
+                            radius = 12;
                             break;
                         case "Uppdrag":
                         case "Kund":
-                            radius = 20;
+                            radius = 15;
                             break;
                         case "Beställare":
                         case "Uppgift":
-                            radius = 6;
+                            radius = 5;
                             break;
-                        default: radius = 12;
+                        default: radius = 8;
                     }
                     return radius;
                 })
                 .attr("fill", function (d) { return color(d.label); })
                 .attr("class", function (d) { return d.label })
                 .style("stroke", function (d) { return d3.rgb(color(d.label)).darker(); })
-                .on("click", function (d) {
-                    alert("Du klickade på: " + d.title);
-                });
+                .on("mouseover", fade(.2, 1))
+                .on("mouseout", fade(1, 0))
+                .on("click", click);
 
             node.append("text")
                 .attr("dx", 2 * radius)
@@ -212,7 +235,66 @@
                 .attr("y", 9)
                 .attr("dy", ".35em")
                 .text(function (d) { return d; });
+
+            function click(d) {
+                if (d3.event.defaultPrevented) return; // ignore drag
+                var detail = $("#details");
+                detail.show();
+                var content = $("#detailContent");
+               
+                content.html("<h3>" + d.title + "</br></h3><p>" + d.label + "</br>" + d.props + "</p>");
+                update();
+            }
+
+            function fade(opacity, x) {
+                return function (d) {
+                    node.style("stroke-opacity", function (o) {
+                        thisOpacity = isConnected(d, o) ? 1 : opacity;
+                        this.setAttribute('fill-opacity', thisOpacity);
+                        return thisOpacity;
+                    });
+
+                    link.style("stroke-opacity", opacity).style("stroke-opacity", function (o) {
+                        return o.source === d || o.target === d ? 1 : opacity;
+                    });
+                };
+            }
+            var linkedByIndex = {};
+            graph.links.forEach(function (d) {
+                linkedByIndex[d.source.index + "," + d.target.index] = 1;
+            });
+
+            function isConnected(a, b) {
+                return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+            }
+
+            function zoomed() {
+                container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+            }
+
+            function dragstarted(d) {
+                d3.event.sourceEvent.stopPropagation();
+
+                d3.select(this).classed("dragging", true);
+                force.start();
+            }
+
+            function dragged(d) {
+
+                d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+
+            }
+
+            function dragended(d) {
+
+                d3.select(this).classed("dragging", false);
+            }
         }
+
+        $('#hide').on('click', function (event) {
+            $('#details').hide();
+        });
+
     });
 </script>
 
