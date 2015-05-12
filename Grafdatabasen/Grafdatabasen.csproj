@@ -185,7 +185,7 @@
     <Content Include="Views\Write\kund.cshtml" />
     <Content Include="Views\Write\_AddUppgiftPartial.cshtml" />
     <Content Include="Views\Write\_AddKundPartial.cshtml" />
-    <Content Include="Views\Write\_AddKompetensPartial.cshtml" />
+    <Content Include="Views\Write\_AddKompetensModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -228,6 +228,7 @@
     <Content Include="Views\Write\_KompetensTabellPartial.cshtml" />
     <Content Include="Views\Write\EditKonsult.cshtml" />
     <Content Include="Views\Write\_EditKompetens.cshtml" />
+    <Content Include="Views\Write\_EditKompetensModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

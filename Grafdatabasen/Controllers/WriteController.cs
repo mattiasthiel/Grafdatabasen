@@ -310,8 +310,16 @@ namespace Grafdatabasen.Controllers
             return PartialView("_RemoveKompetensPartial", vm);
         }
 
+        public ActionResult showAddModalKompetens(string Konsult)
+        {
+            AddKompetensViewModel vm = new AddKompetensViewModel();
+            vm.Konsult = Konsult;
 
-        public ActionResult showPartialKompetens(string Kompetens, string Konsult)
+            return PartialView("_AddKompetensModal", vm);
+
+        }
+
+        public ActionResult showEditModalKompetens(string Kompetens, string Konsult)
         {
             var result = WebApiConfig.GraphClient.Cypher
                 .Match("(konsult:Konsult)-[r:KAN]-(kompetens:Kompetens)")
@@ -334,11 +342,11 @@ namespace Grafdatabasen.Controllers
                 vm.Beskrivning = item.Kompetens.Beskrivning;
                 vm.Niva = item.Niva.Niva;
             }
-            return PartialView("_AddKompetensPartial", vm);
+            return PartialView("_EditKompetensModal", vm);
         }
 
 
-        //[HttpPost]
+        [HttpPost]
         public ActionResult AddKompetens(AddKompetensViewModel vm)
         {
             var nyKompetens = new Kompetens { Namn = vm.Namn, Beskrivning = vm.Beskrivning, Typ = vm.Kompetenstyp };
@@ -361,7 +369,7 @@ namespace Grafdatabasen.Controllers
                 .CreateUnique("konsult-[:KAN{Niva:'" + vm.Niva + "'}]->kompetens")
                 .ExecuteWithoutResults();
 
-            return RedirectToAction("konsult", "Write", new { Id = vm.Konsult });
+            return RedirectToAction("EditKonsult", "Write", routeValues: new { Namn = vm.Konsult });
         }
     }
 }
