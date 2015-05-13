@@ -25,7 +25,7 @@
                          listItem.Add(new SelectListItem() { Text = "Teknik", Value = "Teknik" });
                          listItem.Add(new SelectListItem() { Text = "Metod", Value = "Metod" });
                     }
-                    @Html.DropDownListFor(m => m.Kompetenstyp, listItem, "Välj konsult", new { @id = "KonsultNamn", @class = "form-control" })
+                    @Html.DropDownListFor(m => m.Kompetenstyp, listItem, "--Välj--", new { @id = "KonsultNamn", @class = "form-control" })
                 </div>
             </div>
             <div class="form-group form-group-sm">

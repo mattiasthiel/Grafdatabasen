@@ -61,9 +61,7 @@
                                    @* @Html.Partial("_CustomerAddressDetails", item.Titel) *@
                                 </td>
                                 <td>
-                                    @Html.ActionLink("Edit", "EditKonsult", new { Namn = item.Namn }) |
-                                    @Html.ActionLink("Details", "Details", new { id = item.Namn }) |
-                                    @Html.ActionLink("Delete", "Delete", new { id = item.Namn })
+                                    @Html.ActionLink("Ändra", "EditKonsult", new { Namn = item.Namn }, htmlAttributes: new { @class = "btn btn-default btn-sm pull-right" }) 
                                 </td>
                             </tr>
                         }

@@ -126,6 +126,8 @@ namespace Grafdatabasen.Controllers
                 editKonsult.Kontor = item.Konsult.Kontor;
                 editKonsult.Telefon = item.Konsult.Telefonnummer;
                 editKonsult.Epost = item.Konsult.Epost;
+                editKonsult.Beskrivning = item.Konsult.Beskrivning;
+                editKonsult.Titel = item.Konsult.Titel;
                 foreach (var n in item.Kompetens)
                 {
                     AddKompetensViewModel kompetens = new AddKompetensViewModel();
@@ -137,6 +139,8 @@ namespace Grafdatabasen.Controllers
                     //konsult.Kompetens.Add(kompetens);
                 }
             }
+            AllaKontor(editKonsult.Kontor);
+
             editKonsult.Kompetens = listaKompetenser;
             return View(editKonsult);
         }
@@ -166,8 +170,28 @@ namespace Grafdatabasen.Controllers
             return RedirectToAction("EditKonsult", "Write", routeValues: new { Namn = Konsult });
         }
 
+        public void AllaKontor(string Id)
+        {
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(kontor:Kontor)")
+                .Return((kontor) => new
+                {
+                    Kontor = kontor.As<Kontor>()
+                })
+                .Results;
+            List<Kontor> listaKontor = new List<Kontor>();
+            foreach (var item in result)
+            {
+                Kontor kontor = new Kontor();
+                kontor.Namn = item.Kontor.Namn;
+                listaKontor.Add(kontor);
+            }
 
+            ViewBag.Kontor = new SelectList(listaKontor, "Namn", "Namn", Id);
+        }
 
+        /*ANVÄNDS INTE !?!?!?!?!
+         * 
         public JsonResult GeKonsultInfo(string Namn)
         {
 
@@ -185,8 +209,10 @@ namespace Grafdatabasen.Controllers
 
             return Json(new { success = true, result });
         }
+         * 
+         */ 
         [HttpPost]
-        public ActionResult konsult(AddKonsultViewModel vm)
+        public ActionResult EditKonsult(AddKonsultViewModel vm)
         {
             var nyKonsult = new Konsult
             {
