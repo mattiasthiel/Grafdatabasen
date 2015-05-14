@@ -212,7 +212,7 @@ namespace Grafdatabasen.Controllers
          * 
          */ 
         [HttpPost]
-        public ActionResult EditKonsult(AddKonsultViewModel vm)
+        public ActionResult AddKonsult(AddKonsultViewModel vm)
         {
             var nyKonsult = new Konsult
             {
@@ -247,12 +247,17 @@ namespace Grafdatabasen.Controllers
 
                 })
                 .ExecuteWithoutResults();
+            WebApiConfig.GraphClient.Cypher
+                .Match("(konsult:Konsult)-[r:ARBETAR_I]-(kontor:Kontor)")
+                .Where((Konsult konsult) => konsult.Namn == vm.Namn)
+                .Delete("r")
+                .ExecuteWithoutResults();
 
             WebApiConfig.GraphClient.Cypher
                 .Match("(konsult:Konsult)", "(kontor:Kontor)")
                 .Where((Konsult konsult) => konsult.Namn == vm.Namn)
                 .AndWhere((Kontor kontor) => kontor.Namn == vm.Kontor)
-                .CreateUnique("konsult-[:JOBBAR_På]->kontor")
+                .CreateUnique("konsult-[:ARBETAR_I]->kontor")
                 .ExecuteWithoutResults();
 
 
@@ -270,10 +275,11 @@ namespace Grafdatabasen.Controllers
             return PartialView("_AddKundPartial", vm);
         }
 
-        public ActionResult showPartialKonsult()
+        public ActionResult showAddKonsultModal()
         {
             AddKonsultViewModel vm = new AddKonsultViewModel();
-            return PartialView("_AddKonsultPartial", vm);
+            AllaKontor("");
+            return PartialView("_AddKonsultModal", vm);
         }
 
         [HttpPost]

@@ -223,7 +223,7 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
-    <Content Include="Views\Write\_AddKonsultPartial.cshtml" />
+    <Content Include="Views\Write\_AddKonsultModal.cshtml" />
     <Content Include="Views\Write\_RemoveKompetensPartial.cshtml" />
     <Content Include="Views\Write\_KompetensTabellPartial.cshtml" />
     <Content Include="Views\Write\EditKonsult.cshtml" />
