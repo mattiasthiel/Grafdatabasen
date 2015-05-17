@@ -12,7 +12,7 @@
             <div class="form-group form-group-sm">
                 @Html.LabelFor(m => m.Namn, new { @class = "control-label col-md-1" })
                 <div class="col-md-5" id="KompetensNamn">
-                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control", @placeholder = "KompetensNamn:", @Styles = "height: 40px" } })
+                    @Html.EditorFor(m => m.Namn, new { htmlAttributes = new { @class = "form-control typeahead", @placeholder = "KompetensNamn:", @Styles = "height: 40px" } })
                     @Html.HiddenFor(m => m.Konsult)
                 </div>
             </div>
@@ -49,6 +49,31 @@
 </div>
 }
 <script type="text/javascript">
+    var kompetens = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace(),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: "/Write/GetAllKompetens/?searchTerm=%QUERY"}
+        
+    });
+
+
+    kompetens.initialize();
+
+    
+        $('#KompetensNamn .typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        },
+        {
+            name: 'Namn',
+            displayKey: 'Namn',
+            source: kompetens.ttAdapter()
+        });
+
+
+ /*   
     var states = [];
     var temp = $.parseJSON(sessionStorage.getItem('nodes'));
     temp.forEach(function (row){
@@ -130,5 +155,6 @@
             $('#modal-container').modal('hide');
         });
     });
+    */
 </script>
 

@@ -210,7 +210,31 @@ namespace Grafdatabasen.Controllers
             return Json(new { success = true, result });
         }
          * 
-         */ 
+         */
+        public JsonResult GetAllKompetens(string searchTerm)
+        {
+            var results = WebApiConfig.GraphClient.Cypher
+                .Match("(kompetens:Kompetens)")
+                .Return((kompetens) => new
+                {
+                    Kompetens = kompetens.As<Kompetens>()
+                })
+                .Results;
+
+            List<Kompetens> kompetenser = new List<Kompetens>();
+            foreach (var item in results)
+            {
+                Kompetens komp = new Kompetens();
+                komp.Namn = item.Kompetens.Namn;
+                komp.Beskrivning = item.Kompetens.Beskrivning;
+                komp.Typ = item.Kompetens.Typ;
+                kompetenser.Add(komp);
+            }
+            kompetenser = kompetenser.Where(m => m.Namn.Contains(searchTerm)).ToList();
+
+            return Json(kompetenser, JsonRequestBehavior.AllowGet);
+   }
+        
         [HttpPost]
         public ActionResult AddKonsult(AddKonsultViewModel vm)
         {
