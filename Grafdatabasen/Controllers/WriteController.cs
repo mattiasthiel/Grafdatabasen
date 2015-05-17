@@ -232,7 +232,7 @@ namespace Grafdatabasen.Controllers
             }
             kompetenser = kompetenser.Where(m => m.Namn.Contains(searchTerm)).ToList();
 
-            return Json(kompetenser, JsonRequestBehavior.AllowGet);
+           return Json(kompetenser, JsonRequestBehavior.AllowGet);
    }
         
         [HttpPost]

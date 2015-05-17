@@ -25,7 +25,7 @@
                          listItem.Add(new SelectListItem() { Text = "Teknik", Value = "Teknik" });
                          listItem.Add(new SelectListItem() { Text = "Metod", Value = "Metod" });
                     }
-                    @Html.DropDownListFor(m => m.Kompetenstyp, listItem, "--Välj--", new { @id = "KonsultNamn", @class = "form-control" })
+                    @Html.DropDownListFor(m => m.Kompetenstyp, listItem, "--Välj--", new { @id = "TypModal", @class = "form-control" })
                 </div>
             </div>
             <div class="form-group form-group-sm">
@@ -70,6 +70,21 @@
             name: 'Namn',
             displayKey: 'Namn',
             source: kompetens.ttAdapter()
+        })
+        .on("typeahead:selected", function (obj, selectedItem) {
+            $('#BeskrivningModal:text').val(selectedItem.Beskrivning).show();
+            $('#TypModal').empty();
+            $("#TypModal").append($("<option>").text(selectedItem.Typ).val(selectedItem.Typ));
+        }).on('typeahead:autocompleted', function (e, kompetens) {
+            $('#BeskrivningModal:text').val(selectedItem.Beskrivning).show();
+            $('#TypModal').empty();
+            $("#TypModal").append($("<option>").text(selectedItem.Typ).val(selectedItem.Typ));
+            
+        }).on('change', function () {
+            $('#TypModal').empty();
+            $("#TypModal").append($("<option>").text("Teknik").val("Teknik").attr('Typ', 1));
+            $("#TypModal").append($("<option>").text("Metod").val("Metod").attr('Typ', 2));
+            $("#TypModal").append($("<option>").text("Område").val("Område").attr('Typ', 3));
         });
 
 
