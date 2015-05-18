@@ -43,9 +43,9 @@ namespace Grafdatabasen.ViewModels
 
         public DateTime Slutdatum { get; set; }
 
-        public virtual List<Uppgift> Uppgifter { get; set; }
+        public virtual List<AddUppgiftViewModel> Uppgifter { get; set; }
 
-        public virtual List<Utvardering> Utvarderingar { get; set; }
+        //public virtual List<Utvardering> Utvarderingar { get; set; }
 
     }
 }

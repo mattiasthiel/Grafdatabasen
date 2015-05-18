@@ -75,7 +75,7 @@
             $('#BeskrivningModal:text').val(selectedItem.Beskrivning).show();
             $('#TypModal').empty();
             $("#TypModal").append($("<option>").text(selectedItem.Typ).val(selectedItem.Typ));
-        }).on('typeahead:autocompleted', function (e, kompetens) {
+        }).on('typeahead:autocompleted', function (obj, selectedItem) {
             $('#BeskrivningModal:text').val(selectedItem.Beskrivning).show();
             $('#TypModal').empty();
             $("#TypModal").append($("<option>").text(selectedItem.Typ).val(selectedItem.Typ));

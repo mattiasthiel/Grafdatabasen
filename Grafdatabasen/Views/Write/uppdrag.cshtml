@@ -21,8 +21,53 @@
     <div class="tab-content">
         <div id="uppdrag">
 
-@model Grafdatabasen.ViewModels.AddUppdragViewModel
+            @model IEnumerable<Grafdatabasen.ViewModels.AddUppdragViewModel>
 
+            <table class="table customer">
+                @*Headers*@
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Namn)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Problem)
+                    </th>
+                    <th>
+                        @Html.DisplayName("Konsulter")
+                    </th>
+                    <th></th>
+                </tr>
+
+                @*Konsult Data*@
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(c => item.Namn)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(c => item.Problem)
+                        </td>
+                        <td>
+                            @Html.Partial("_UppgiftTabellPartial", item.Uppgifter)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Ändra", "EditKonsult", new { Namn = item.Namn }, htmlAttributes: new { @class = "btn btn-default btn-sm pull-right" })
+                        </td>
+                    </tr>
+                }
+
+            </table>
+
+
+
+
+
+
+
+
+
+            @*
             <div class="row">
                 <p>&nbsp;</p>
                 @using (Html.BeginForm())
@@ -120,7 +165,7 @@
                                 <!-- Default panel contents -->
                                 <div class="panel-heading clearfix">
                                     <h5 class="panel-title pull-left" style="padding-top: 5px;">Konsulter knutna till detta uppdrag:</h5>
-                                    @*<input type="submit" value="Lägg till konsult" onclick="location.href='@Url.Action("Index", "Write")'"  id="addUppgiftBtn" class="btn btn-default btn-sm pull-right" />*@
+                                    @*<input type="submit" value="Lägg till konsult" onclick="location.href='@Url.Action("Index", "Write")'"  id="addUppgiftBtn" class="btn btn-default btn-sm pull-right" />
                                     @Html.ActionLink("Lägg till konsult ", "showPartialUppgift", "Write", null, new { @class = "modal-link btn btn-default btn-sm pull-right" })
                                 </div>
                                 <!-- Table -->
@@ -151,14 +196,12 @@
                     </div>
 
                 }
-            </div>        
+            </div> 
+            *@       
         </div>
     </div>
 </div>
 
-<!-- FUSKAT LITE HÄR OCH LADDAT IN JQUERY IGEN , FÖRSÖK HITTA VARFÖR DEN INTE LADDAR-->
-@*Scripts.Render("~/Scripts/jquery-2.1.3.min.js")
-@Scripts.Render("~/Scripts/typeahead.bundle.js")*@
 
 
 
@@ -200,6 +243,8 @@
 </script>
 
 <script type="text/javascript">
+
+    /*
     // The query
     var query = {
         "statements": [{
@@ -293,17 +338,6 @@
 
         }
     });
+    */
+</script>
 
-</script>
-<script type="text/javascript">
-    $('#uppdragkundText').on("change", function (e) {
-        document.getElementById('uppdragbestallareText').removeAttr('disabled');
-        // TODO: Kör ny funktion som hämtar alla beställare för vald kund.
-            
-    });
-</script>
-<script type="text/javascript">
-    $('#uppdragnamnText').change(function () {
-        // TODO: funktion som plockar ut alla attribut för valt uppdrag. 
-    });
-</script>

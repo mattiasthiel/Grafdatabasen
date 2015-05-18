@@ -53,9 +53,52 @@ namespace Grafdatabasen.Controllers
         public ActionResult uppdrag()
         {
             ViewBag.Message = "Lägg till/ändra uppdrag";
-            var vm = new AddUppdragViewModel();
+            var result = WebApiConfig.GraphClient.Cypher
+                //.Match("(konsult:Konsult)")
+                .Match("(uppdrag:Uppdrag)-[:DEL_AV]-(uppgift:Uppgift)-[:UTFÖR]-(konsult:Konsult)")
+                .OptionalMatch("(uppgift:Uppgift)-[:I_ROLL]-(roll:Roll)")
+                .Return((konsult, uppdrag, roll) => new
+                {
+                    Uppdrag = uppdrag.As<Uppdrag>(),
+                    Konsult = konsult.CollectAs<Konsult>(),
+                    Roll = roll.CollectAs<Roll>()
+                })
+                .OrderBy("Uppdrag.Namn")
+                .Results;
+            List<AddUppdragViewModel> listaUppdrag = new List<AddUppdragViewModel>();
+            //AddKonsultViewModel vm = new AddKonsultViewModel();
+            foreach (var item in result)
+            {
+                List<AddUppgiftViewModel> listaUppgifter = new List<AddUppgiftViewModel>();
+                AddUppdragViewModel uppdrag = new AddUppdragViewModel();
+                uppdrag.Namn = item.Uppdrag.Namn;
+                uppdrag.Problem = item.Uppdrag.Problem;
+                List<Roll> tempRollLista = new List<Roll>();
+                foreach (var n in item.Roll){
+                    Roll tempRoll = new Roll();
+                    tempRoll.Namn = n.Data.Namn;
+                    tempRollLista.Add(tempRoll);
+                }
+                List<Konsult> tempKonsultLista = new List<Konsult>();
+                foreach (var n in item.Konsult)
+                {
+                    Konsult tempKonsult = new Konsult();
+                    tempKonsult.Namn = n.Data.Namn;
+                    tempKonsultLista.Add(tempKonsult);
+                }
+                for (var i = 0; i < tempKonsultLista.Count(); ++i)
+                {
+                    AddUppgiftViewModel uppgift = new AddUppgiftViewModel();
+                    uppgift.Roll = tempRollLista[i].Namn;
+                    uppgift.Konsult = tempKonsultLista[i].Namn;
+                    listaUppgifter.Add(uppgift);
+                }
+                uppdrag.Uppgifter = listaUppgifter;
+                listaUppdrag.Add(uppdrag);
 
-            return View(vm);
+            }
+
+            return View(listaUppdrag);
         }
 
         public ActionResult kund()
@@ -87,6 +130,8 @@ namespace Grafdatabasen.Controllers
                 List<AddKompetensViewModel> listaKompetenser = new List<AddKompetensViewModel>();
                 AddKonsultViewModel konsult = new AddKonsultViewModel();
                 konsult.Namn = item.Konsult.Namn;
+                konsult.Epost = item.Konsult.Epost;
+                
                 foreach (var n in item.Kompetens)
                 {
                     AddKompetensViewModel kompetens = new AddKompetensViewModel();
