@@ -56,7 +56,7 @@
         position: absolute;
         top: 80px;
         left: 10px;
-        z-index: 8;
+        z-index: 3;
         padding: 5px;
         background-color: white;
         opacity: 0.8;
@@ -216,8 +216,8 @@
 
             var legend = d3.select("#legend").append("svg")
                 .attr("class", "legend")
-                .attr("width", 100)
-                .attr("height", 120)
+                .attr("width", 80)
+                .attr("height", 140)
                 .selectAll("g")
                 .data(color.domain().slice().reverse())
                 .enter().append("g")

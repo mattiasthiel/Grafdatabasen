@@ -58,7 +58,8 @@
                     lista1.Add(new SelectListItem { Text = "  --Välj--   ", Value = "0" });
                     lista1.Add(new SelectListItem { Text = "konsulter", Value = "Konsult" });
                     lista1.Add(new SelectListItem { Text = "uppdrag", Value = "Uppdrag" });
-                    lista1.Add(new SelectListItem { Text = "kunder", Value = "Kund" });
+                    lista1.Add(new SelectListItem { Text = "företag", Value = "Kund" });
+                    lista1.Add(new SelectListItem { Text = "kompetenser", Value = "Kompetens" });
                     List<SelectListItem> lista2 = new List<SelectListItem>();
                     lista2.Add(new SelectListItem { Text = " --Välj-- ", Value = "0" });
 
@@ -86,12 +87,12 @@
         </div>
     </div>
 </div>
-<div id="details" class="col-md-6">
+<div id="resultatpanel" class="col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Sökresultat</h3>
         </div>
-        <div class="panel-body">
+        <div id="resultat" class="panel-body">
             Detaljer
         </div>
     </div>
@@ -105,10 +106,10 @@
 
         $("#lista2, #lista3, #lista4, #lista5").hide();
         // Steg 1:
-        Konsult=new Array({Text:"har kompetens inom ",Value:"KAN"},{Text : "utfört uppdrag för ",Value :"UTFÖR"},{Text:"har haft roll som ",Value:"I_ROLL"},{Text:"tidigare arbetat för ", Value:"TIDIGARE_ANSTÄLLD_HOS"});
-        Uppdrag=new Array({Text : "utförts för ",Value :"KUND"},{Text:"innehållit tekniken ",Value:"TEKNIK"},{Text:"haft en budget på ", Value:"Budget"});
+        Konsult=new Array({Text:"har kompetens inom ",Value:"KAN"},{Text : "utfört uppdrag för ",Value :"UTFÖR"},{Text:"kan rollen som ",Value:"I_ROLL"},{Text:"har certifiering för ",Value:"UTBILDNING"},{Text:"tidigare arbetat för ", Value:"TIDIGARE_ANSTÄLLD_HOS"});
+        Uppdrag=new Array({Text : "utförts för ",Value :"KUND"},{Text:"innehållit tekniken ",Value:"TEKNIK"},{Text:"berört området ", Value:"OMRÅDE"});
         Kund=new Array({Text:"tillhör segmentet ",Value:"SEGMENT"},{Text : "beställt uppdrag inom ",Value :"OMRÅDE"});
-
+        Kompetens=new Array({Text:"är av typen ", Value:"TYP"}, {Text:"finns i ", Value:"ANSTÄLLD"}, {Text:"INTE finns i ", Value:"NOT"});
         $(function() {
             $('#lista1').change(function(){
                 populateSelect("#lista1", "#lista2");
