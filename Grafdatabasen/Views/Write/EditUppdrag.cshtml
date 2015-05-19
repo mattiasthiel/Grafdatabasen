@@ -1,13 +1,13 @@
 ﻿@model Grafdatabasen.ViewModels.AddUppdragViewModel
 
 @{
-    ViewBag.Title = "EditKonsult";
+    ViewBag.Title = "Ändra Uppdrag";
     ViewBag.Uppdrag = Model.Namn;
 }
 
 <h2>EditKonsult</h2>
 
-@using (Html.BeginForm("AddKonsult", "Write", FormMethod.Post))
+@using (Html.BeginForm("AddUppdrag", "Write", FormMethod.Post))
 {
 
     <div class="form-horizontal">

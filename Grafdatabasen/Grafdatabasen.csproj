@@ -233,7 +233,7 @@
     <Content Include="Views\Write\_UppgiftTabellPartial.cshtml" />
     <Content Include="Views\Write\EditUppdrag.cshtml" />
     <Content Include="Views\Write\_EditUppdrag.cshtml" />
-    <Content Include="Views\Write\_EditUppgiftModal.cshtml" />
+    <Content Include="Views\Write\_AddUppgiftModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

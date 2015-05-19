@@ -10,6 +10,8 @@ namespace Grafdatabasen.ViewModels
     {
         public string Konsult { get; set; }
 
-        public string Roll { get; set; }        
+        public string Roll { get; set; }
+
+        public string Uppdrag { get; set; }
     }
 }

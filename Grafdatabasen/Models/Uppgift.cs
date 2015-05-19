@@ -9,17 +9,9 @@ namespace Grafdatabasen.Models
     {
         public string Namn { get; set; }
 
-        public string Beskrivning { get; set; }
+        public string Konsult { get; set; }
 
-        public float Grad { get; set; }
-
-        public DateTime startDatum { get; set; }
-
-        public DateTime slutDatum { get; set; }
-
-        public Konsult Konsult { get; set; }
-
-        public virtual Uppdrag Uppdrag { get; set; }
+        public string Uppdrag { get; set; }
 
         public virtual Roll Roll { get; set; }
 
