@@ -16,6 +16,14 @@
         border:none;
         border-bottom:1px dotted lightgrey;
     }
+    #graf {
+        position:absolute;
+        top:270px;
+        left:10px;
+    }
+        .link {
+        stroke: #999;
+    }
 </style>
 <div class="row"><p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -33,13 +41,14 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
-                <div class="col-md-5" id="uppdragTypeahead">
-                    @Html.EditorFor(m => m.Nod, new { htmlAttributes = new { @class = "form-control typeahead", @placeholder = "Sök i databasen:" } })
+                <div class="col-md-6" id="enkel">
+                    <select id="select2" style="width:300px">
+                        <option></option>
+                    </select>
                 </div>
-                <div class="col-md-1 pull-right">
-                    <input type="submit" value="Visa" onclick="location.href='@Url.Action("Search", "Graf")'" id="visaDetaljer" class="btn btn-default pull-right" />
-                </div>
-           
+                @*<div id="searchbutton" class="col-md-1 pull-right">
+                    <button class="btn-sm btn-success">Sök</button>
+                </div>*@
             </div>
         </div>
     </div>
@@ -87,113 +96,225 @@
         </div>
     </div>
 </div>
-<div id="resultatpanel" class="col-md-6">
+<div id="resultatpanel" class="col-md-6" hidden="hidden">
     <div class="panel panel-default">
         <div class="panel-heading">
+            <button type="button" id="close" class="close pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h3 class="panel-title">Sökresultat</h3>
         </div>
-        <div id="resultat" class="panel-body">
-            Detaljer
+        <div class="panel-body">
+            <div id="resultat"></div>
+            <button type="button" id="visa" class="btn-sm btn-success pull-right" >Visa graf</button>
         </div>
     </div>
-
 </div>
+<div id="graf"></div>
+
+<script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+    $(function(){
 
+        var request = ajaxneo4j("match (n)  Where n:Konsult OR n:Uppdrag Unwind labels(n) as l Return distinct n.Namn, l");
+        var query, nodTyp;
+        
+        request.done(makeOptgroup);
 
-    $('#nyfiken').on('show.bs.collapse', function () {
-
-        $("#lista2, #lista3, #lista4, #lista5").hide();
-        // Steg 1:
-        Konsult=new Array({Text:"har kompetens inom ",Value:"KAN"},{Text : "utfört uppdrag för ",Value :"UTFÖR"},{Text:"kan rollen som ",Value:"I_ROLL"},{Text:"har certifiering för ",Value:"UTBILDNING"},{Text:"tidigare arbetat för ", Value:"TIDIGARE_ANSTÄLLD_HOS"});
-        Uppdrag=new Array({Text : "utförts för ",Value :"KUND"},{Text:"innehållit tekniken ",Value:"TEKNIK"},{Text:"berört området ", Value:"OMRÅDE"});
-        Kund=new Array({Text:"tillhör segmentet ",Value:"SEGMENT"},{Text : "beställt uppdrag inom ",Value :"OMRÅDE"});
-        Kompetens=new Array({Text:"är av typen ", Value:"TYP"}, {Text:"finns i ", Value:"ANSTÄLLD"}, {Text:"INTE finns i ", Value:"NOT"});
-        $(function() {
-            $('#lista1').change(function(){
-                populateSelect("#lista1", "#lista2");
-                $('#som1 span').text("     som... ");
-                $( "#lista2" ).show();
-                $('#lista3').empty();
-            });
-        });
-
-        KAN = new Array();
-        UTFÖR = new Array();
-        I_ROLL = new Array();
-        TIDIGARE_ANSTÄLLD_HOS = new Array();
-
-        KUND = UTFÖR;
-        TEKNIK = new Array();
-        Budget = new Array({ Text: " < 200 000 kr ", Value: "0" }, { Text: " 200 000 - 500 000 kr ", Value: "1" }, { Text: " < 500 000 kr", Value: "2" })
-
-        SEGMENT = new Array();
-        OMRÅDE = new Array();
-
-
-        function populateSelect(x, y){
-            var listval=$(x).val();
-            $(y).empty();
-            eval(listval).forEach(function(t) { 
-                if(t.Text !== null){ 
-                    $(y).append($("<option />").text(t.Text).val(t.Value));
-                }
-            });
+        function idIndex(a, id) {
+            for (var i = 0; i < a.length; i++) {
+                if (a[i].id == id) return i;
+            }
+            return null;
         }
 
-        $(function() {
-            ajaxneo4j("match (n)-[:KAN]->(m) return distinct m.Namn").responseJSON.results[0].data.forEach(function (n) {
-                KAN.push({Text: n.row[0] ,Value: n.row[0]});
-            });
-        })
-        $(function () {
-            ajaxneo4j("match (n:Kund) return distinct n.Namn").responseJSON.results[0].data.forEach(function (n) {
-                UTFÖR.push({ Text: n.row[0], Value: n.row[0] });
-            });
-        })
-        $(function () {
-            ajaxneo4j("match (n)-[r:I_ROLL]->(m) return distinct m.Namn").responseJSON.results[0].data.forEach(function (n) {
-                I_ROLL.push({ Text: n.row[0], Value: n.row[0] });
-            });
-        })
-        $(function () {
-            ajaxneo4j("match (n:Kund) return distinct n.Namn").responseJSON.results[0].data.forEach(function (n) {
-                TIDIGARE_ANSTÄLLD_HOS.push({ Text: n.row[0], Value: n.row[0] });
-            });
-        })
-        $(function () {
-            ajaxneo4j("match (n:Teknik) return distinct n.Namn").responseJSON.results[0].data.forEach(function (n) {
-                TEKNIK.push({ Text: n.row[0], Value: n.row[0] });
-            });
-        })
-        $(function () {
-            ajaxneo4j("match (n:Segment) return distinct n.Namn").responseJSON.results[0].data.forEach(function (n) {
-                SEGMENT.push({ Text: n.row[0], Value: n.row[0] });
-            });
-        })
-        $(function () {
-            ajaxneo4j("match (n:Kompetens) return distinct n.Namn").responseJSON.results[0].data.forEach(function (n) {
-                OMRÅDE.push({ Text: n.row[0], Value: n.row[0] });
-            });
+        $("#select2").select2({
+            placeholder: "Sök på Uppdrag | Konsult",
+            minimumInputLength: 1,
         })
 
-        //Kund = new Array({ Text: "tillhör segmentet ", Value: "I_SEGMENT" }, { Text: "beställt uppdrag inom ", Value: "BESTÄLLT" });
+        $("#select2").change(function () {
+            query = $("#select2 option:selected").val();
+            search(query);
+            $("#graf").html("");
+        })
 
+        function makeOptgroup(y) {                
+            var optgroup = [];
+            y.results[0].data.forEach(function (d) {
+                if ($.inArray(d.row[1], optgroup)== -1) {
+                    optgroup.push(d.row[1]);
+                    $("#select2").append("<optgroup id=" + d.row[1] + " label=" + d.row[1] + "></optgroup>")
+                    }
+                switch (d.row[1].toString()) {
+                    case "Konsult": 
+                        $("#Konsult").append("<option> " + d.row[0] + "</option>");
+                        break;
+                    case "Uppdrag": 
+                        $("#Uppdrag").append("<option> " + d.row[0] + "</option>");
+                        break;
+                    //case Kompetens: 
+                    //    $("#Kompetens").append("<option>" + d.row[0] + "</option>");
+                    //    break;
+                    //case Kund: 
+                    //    $("#Kund").append("<option>" + d.row[0] + "</option>");
+                    //    break;
+                    default: 
+                }
+            })
+        }
 
-        //var nonsens4 = ajaxneo4j("match (n)-[r:IN_ROLE]->(m) return distinct m.name").responseJSON.results[0].data.forEach(function (n) {
-        //        TIDIGARE_ANSTÄLLD_HOS.push({Text: n.row[0] ,Value: n.row[0]});
-        //    });
+        function search(query) {
+            var search = ajaxneo4j("match (n)  Where n.Namn = '" + query + "' Return distinct n");
+            search.done(presentresult);
+            return;
+        }
 
-        $(function() {
-            $('#lista2').change(function(){
-                populateSelect("#lista2", "#lista3");
-                $( "#lista3" ).show();
-            });
+        function presentresult(x){
+            var resultatpanel= $("#resultatpanel");
+            var nodes = [];
+            resultatpanel.show();
+            x.results[0].data[0].graph.nodes.forEach(function (n) {
+                if (idIndex(nodes, n.id) == null) {
+                    var property = [];
+                    for (var item in n.properties) {
+                        property.push("<br><strong>" + item + ":  </strong>" + n.properties[item]);
+                    }
+                    var resultat= $("#resultat");
+                    resultat.html("<p>" + n.labels[0] + "</br>" + property + "</p>");
+                    nodTyp = n.labels[0];
+                }
+            })
+            return;
+        }
+
+        $("#close").on('click', function (event) {
+            $("#resultatpanel").hide();
+            $("#graf").html("");
         });
 
+        $("#headingTwo").on('click', function (event) {
+            $("#resultatpanel").hide();
+            $("#graf").html("");
+        });
 
+        //  Nedan är visualisering av sökresultatet
+        $("#visa").on('click', function () {
+            if (nodTyp == "Konsult") {
+                var graf = ajaxneo4j("match path=(n {Namn:'" + query + "'})-[*1..2]->(m) return path");
+            }
+            else {
+                var graf = ajaxneo4j("match path=(n {Namn:'" + query + "'})-[*1..2]-(m) return path");
+            }
+            console.log(graf);
+            graf.done(displayd3);
+
+            function displayd3(y) {
+                var nodes = [], links = [];
+                y.results[0].data.forEach(function (row) {
+                    row.graph.nodes.forEach(function (n) {
+                        if (idIndex(nodes, n.id) == null) {
+                            var property = [];
+                            for (var item in n.properties) {
+                                property.push("<br><strong>" + item + ": </strong>" + n.properties[item]);
+                            }
+                            nodes.push({ id: n.id, label: n.labels[0], title: n.properties.Namn, props: property });
+                        }
+                    });
+                    links = links.concat(row.graph.relationships.map(function (r) {
+                        return { source: idIndex(nodes, r.startNode), target: idIndex(nodes, r.endNode), type: r.type };
+                    }));
+                });
+                var graph = { nodes: nodes, links: links };
+
+
+                var margin = {top: -5, right: -5, bottom: -5, left: -5};
+                var width = 670 - margin.left - margin.right, height = 400- margin.top - margin.bottom;
+                var color = d3.scale.category20();
+
+                var svg = d3.select("#graf").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
+
+                var force = d3.layout.force()
+                        .charge(-200)
+                        .linkDistance(50)
+                        .size([width + margin.left + margin.right, height + margin.top + margin.bottom]);
+
+                force
+                    .nodes(graph.nodes)
+                    .links(graph.links)
+                    .start();
+
+                var container = svg.append("g");
+
+                var link = container.selectAll(".link")
+                        .data(graph.links)
+                        .enter()
+                        .append("line")
+                        .attr("class", "link");
+
+                var node = container.selectAll(".node")
+                        .data(graph.nodes)
+                        .enter().append("g")
+                        .call(force.drag);
+
+                node.append("circle")
+                    .attr("r", function (d) {
+                        var size;
+                        switch (d.label) {
+                            case "Konsult":
+                            case "Uppdrag":
+                            case "Kund":
+                                radius = 15;
+                                break;
+                            case "Beställare":
+                            case "Uppgift":
+                                radius = 5;
+                                break;
+                            default: radius = 9;
+                        }
+                        return radius;
+                    })
+                    .attr("fill", function (d) { return color(d.label); })
+                    .attr("class", function (d) { return d.label })
+                    .style("stroke", function (d) { return d3.rgb(color(d.label)).darker(); });
+
+                node.append("text")
+                    .attr("dx", 2 * radius)
+                    .attr("dy", ".35em")
+                    .text(function (d) { return d.title });
+
+                force.on("tick", function () {
+                    link.attr("x1", function (d) { return d.source.x; })
+                        .attr("y1", function (d) { return d.source.y; })
+                        .attr("x2", function (d) { return d.target.x; })
+                        .attr("y2", function (d) { return d.target.y; });
+
+                    node.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+                });
+                node.append("title")
+                        .text(function (d) { return d.label; });
+
+                //function zoomed() {
+                //    container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                //}
+                //function dragstarted(d) {
+                //    d3.event.sourceEvent.stopPropagation();
+                //    d3.select(this).classed("dragging", true);
+                //    force.start();
+                //}
+                //function dragged(d) {
+                //    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+                //}
+                //function dragended(d) {
+                //    d3.select(this).classed("dragging", false);
+                //}
+            }
+        })
 
     });
+
 </script>
 

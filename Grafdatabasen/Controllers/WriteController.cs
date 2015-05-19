@@ -89,8 +89,8 @@ namespace Grafdatabasen.Controllers
                 for (var i = 0; i < tempKonsultLista.Count(); ++i)
                 {
                     AddUppgiftViewModel uppgift = new AddUppgiftViewModel();
-                    uppgift.Roll = tempRollLista[i].Namn;
-                    uppgift.Konsult = tempKonsultLista[i].Namn;
+                    //uppgift.Roll = tempRollLista[i].Namn;
+                    //uppgift.Konsult = tempKonsultLista[i].Namn;
                     listaUppgifter.Add(uppgift);
                 }
                 uppdrag.Uppgifter = listaUppgifter;
