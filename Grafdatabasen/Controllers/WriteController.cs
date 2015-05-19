@@ -54,8 +54,8 @@ namespace Grafdatabasen.Controllers
         {
             ViewBag.Message = "Lägg till/ändra uppdrag";
             var result = WebApiConfig.GraphClient.Cypher
-                //.Match("(konsult:Konsult)")
-                .Match("(uppdrag:Uppdrag)-[:DEL_AV]-(uppgift:Uppgift)-[:UTFÖR]-(konsult:Konsult)")
+                .Match("(uppdrag:Uppdrag)")
+                .OptionalMatch("(uppdrag:Uppdrag)-[:DEL_AV]-(uppgift:Uppgift)-[:UTFÖR]-(konsult:Konsult)")
                 .OptionalMatch("(uppgift:Uppgift)-[:I_ROLL]-(roll:Roll)")
                 .Return((konsult, uppdrag, roll) => new
                 {
@@ -101,6 +101,107 @@ namespace Grafdatabasen.Controllers
             return View(listaUppdrag);
         }
 
+        public ActionResult EditUppdrag(string Namn)
+        {
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(uppdrag:Uppdrag)")
+                .Where((Uppdrag uppdrag) => uppdrag.Namn == Namn)
+                .OptionalMatch("(uppdrag:Uppdrag)-[:DEL_AV]-(uppgift:Uppgift)-[:UTFÖR]-(konsult:Konsult)")
+                .OptionalMatch("(uppgift:Uppgift)-[:I_ROLL]-(roll:Roll)")
+                .OptionalMatch("(uppdrag:Uppdrag)-[:BESTÄLLER]-(bestallare:Bestallare)-[:BESTÄLLER_ÅT]-(kund:Kund)")
+                .Return((konsult, uppdrag, roll, bestallare, kund) => new
+                {
+                    Uppdrag = uppdrag.As<Uppdrag>(),
+                    Konsult = konsult.CollectAs<Konsult>(),
+                    Roll = roll.CollectAs<Roll>(), 
+                    Bestallare = bestallare.As<Bestallare>(),
+                    Kund = kund.As<Kund>()
+                })
+                .Results;
+            AddUppdragViewModel editUppdrag = new AddUppdragViewModel();
+            foreach (var item in result)
+            {
+                List<AddUppgiftViewModel> listaUppgifter = new List<AddUppgiftViewModel>();
+                editUppdrag.Namn = item.Uppdrag.Namn;
+                editUppdrag.Problem = item.Uppdrag.Problem;
+                editUppdrag.Losning = item.Uppdrag.Losning;
+                editUppdrag.Resultat = item.Uppdrag.Resultat;
+                editUppdrag.Timmar = item.Uppdrag.Timmar;
+                editUppdrag.Beskrivning = item.Uppdrag.Beskrivning;
+                editUppdrag.Kund = item.Kund.Namn;
+                editUppdrag.Bestallare = item.Bestallare.Namn;
+                List<Roll> tempRollLista = new List<Roll>();
+                foreach (var n in item.Roll)
+                {
+                    Roll tempRoll = new Roll();
+                    tempRoll.Namn = n.Data.Namn;
+                    tempRollLista.Add(tempRoll);
+                }
+                List<Konsult> tempKonsultLista = new List<Konsult>();
+                foreach (var n in item.Konsult)
+                {
+                    Konsult tempKonsult = new Konsult();
+                    tempKonsult.Namn = n.Data.Namn;
+                    tempKonsultLista.Add(tempKonsult);
+                }
+                for (var i = 0; i < tempKonsultLista.Count(); ++i)
+                {
+                    AddUppgiftViewModel uppgift = new AddUppgiftViewModel();
+                    uppgift.Roll = tempRollLista[i].Namn;
+                    uppgift.Konsult = tempKonsultLista[i].Namn;
+                    listaUppgifter.Add(uppgift);
+                }
+                editUppdrag.Uppgifter = listaUppgifter;
+            }
+            AllaKunder(editUppdrag.Kund);
+            AllaBestallare(editUppdrag.Bestallare);
+
+            return View(editUppdrag);
+        }
+
+        public ActionResult showAddModalUppgift(string Konsult, string Roll, string Uppdrag)
+        {
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(uppdrag:Uppdrag)-[:DEL_AV]-(uppgift:Uppgift)-[:UTFÖR]-(konsult:Konsult)")
+                .Where((Uppdrag uppdrag) => uppdrag.Namn == Uppdrag)
+                .AndWhere((Konsult konsult) => konsult.Namn == Konsult)
+                .OptionalMatch("(uppgift:Uppgift)-[:I_ROLL]-(roll:Roll)")
+                .Where((Roll roll) => roll.Namn == Roll)
+                .Return((konsult, uppdrag, roll) => new
+                {
+                    Uppdrag = uppdrag.As<Uppdrag>(),
+                    Konsult = konsult.As<Konsult>(),
+                    Roll = roll.As<Roll>()
+                })
+                .Results;
+
+            AddUppgiftViewModel vm = new AddUppgiftViewModel();
+            foreach (var item in result)
+            {
+                vm.Konsult = item.Konsult.Namn;
+                vm.Roll = item.Roll.Namn;
+            }
+
+            return PartialView("_EditUppgiftModal", vm);
+        }
+
+        public ActionResult RemoveUppgift(string Konsult, string Roll, string Uppdrag)
+        {
+            WebApiConfig.GraphClient.Cypher
+                .Match("(uppdrag:Uppdrag)")
+                .Where((Uppdrag uppdrag) => uppdrag.Namn == Uppdrag)
+                .OptionalMatch("(uppdrag:Uppdrag)-[r1:DEL_AV]-(uppgift:Uppgift)-[r2:UTFÖR]-(konsult:Konsult)")
+                .Where((Konsult konsult) => konsult.Namn == Konsult)
+                .OptionalMatch("(uppgift:Uppgift)-[r3:I_ROLL]-(roll:Roll)")
+                .Where((Roll roll) => roll.Namn == Roll)
+                .Delete("r1, r2, r3")
+                .Delete("uppgift")
+                .ExecuteWithoutResults();
+
+            return RedirectToAction("EditUppdrag", "Write", routeValues: new { Namn = Uppdrag });
+
+        }
+
         public ActionResult kund()
         {
             ViewBag.Message = "Lägg till/ändra kund";
@@ -108,7 +209,7 @@ namespace Grafdatabasen.Controllers
             return View();
         }
 
-        public ActionResult konsult(string Id = "")
+        public ActionResult konsult()
         {
             ViewBag.Message = "Lägg till/ändra konsult";
             var result = WebApiConfig.GraphClient.Cypher
@@ -190,7 +291,6 @@ namespace Grafdatabasen.Controllers
             return View(editKonsult);
         }
 
-
         public ActionResult EditKompetens(string Namn, string Konsult, int Niva)
         {
             WebApiConfig.GraphClient.Cypher
@@ -233,6 +333,46 @@ namespace Grafdatabasen.Controllers
             }
 
             ViewBag.Kontor = new SelectList(listaKontor, "Namn", "Namn", Id);
+        }
+
+        public void AllaKunder(string Id)
+        {
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(kund:Kund)")
+                .Return((kund) => new
+                {
+                    Kund = kund.As<Kund>()
+                })
+                .Results;
+
+            List<Kund> listaKunder = new List<Kund>();
+            foreach (var item in result)
+            {
+                Kund kund = new Kund();
+                kund.Namn = item.Kund.Namn;
+                listaKunder.Add(kund);
+            }
+            ViewBag.Kunder = new SelectList(listaKunder, "Namn", "Namn", Id);
+        }
+
+        public void AllaBestallare(string Id)
+        {
+            var result = WebApiConfig.GraphClient.Cypher
+                .Match("(bestallare:Bestallare)")
+                .Return((bestallare) => new
+                {
+                    Bestallare = bestallare.As<Bestallare>()
+                })
+                .Results;
+
+            List<Bestallare> listaBestallare = new List<Bestallare>();
+            foreach (var item in result)
+            {
+                Bestallare bestallare = new Bestallare();
+                bestallare.Namn = item.Bestallare.Namn;
+                listaBestallare.Add(bestallare);
+            }
+            ViewBag.Bestallare = new SelectList(listaBestallare, "Namn", "Namn", Id);
         }
 
         /*ANVÄNDS INTE !?!?!?!?!

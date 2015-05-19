@@ -1,0 +1,93 @@
+﻿@model Grafdatabasen.ViewModels.AddUppdragViewModel
+
+@{
+    ViewBag.Title = "EditKonsult";
+    ViewBag.Uppdrag = Model.Namn;
+}
+
+<h2>EditKonsult</h2>
+
+@using (Html.BeginForm("AddKonsult", "Write", FormMethod.Post))
+{
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Namn, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Namn, new { @class = "form-control", @readonly = "readonly", @Styles = "height: 40px" })
+                @Html.ValidationMessageFor(model => model.Namn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Kund, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("Kunder")
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Bestallare, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("Bestallare")
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Problem, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Problem, new { htmlAttributes = new { @class = "form-control", @Styles = "height: 40px" } })
+                @Html.ValidationMessageFor(model => model.Problem, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Losning, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Losning, new { htmlAttributes = new { @class = "form-control", @Styles = "height: 40px" } })
+                @Html.ValidationMessageFor(model => model.Losning, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Resultat, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Resultat, new { htmlAttributes = new { @class = "form-control", @Styles = "height: 40px" } })
+                @Html.ValidationMessageFor(model => model.Resultat, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Kostnad, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Kostnad, new { htmlAttributes = new { @class = "form-control", @Styles = "height: 40px" } })
+                @Html.ValidationMessageFor(model => model.Kostnad, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Beskrivning, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Beskrivning, new { htmlAttributes = new { @class = "form-control", @Styles = "height: 40px" } })
+                @Html.ValidationMessageFor(model => model.Beskrivning, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+        <h4>Konsulter:</h4>
+        @Html.Partial("_EditUppdrag", Model.Uppgifter)
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Spara" id="nestaKnapp" onclick="location.href='@Url.Action("AddKonsult", "Write", null)'" class="btn btn-sm btn-primary" />
+            </div>
+        </div>
+    </div>
+
+}
+
+<div>
+    @Html.ActionLink("Back to List", "uppdrag")
+</div>

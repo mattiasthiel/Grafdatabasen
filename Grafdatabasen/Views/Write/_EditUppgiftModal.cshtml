@@ -1,0 +1,46 @@
+﻿@model Grafdatabasen.ViewModels.AddUppgiftViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Stäng</span></button>
+    <h4 class="modal-title text-center" id="modalHeader">Ändra kompetens:</h4>
+</div>
+@using (Html.BeginForm("EditUppgift", "Write", FormMethod.Post))
+{
+    <div class="modal-body">
+        <div class="col-md-12">
+            <div class="form-horizontal">
+
+                <div>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Konsult)
+                        </dt>
+                        <dd>
+                            @Html.DisplayTextFor(m => m.Konsult)
+                            @Html.HiddenFor(m => m.Konsult)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(m => m.Roll)
+                        </dt>
+                        <dd>
+                            @Html.DisplayTextFor(m => m.Roll)
+                            @Html.HiddenFor(m => m.Roll)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="submit" value="Spara" onclick="location.href='@Url.Action("EditKompetens", "Write", null)'" id="sparaKnapp" class="btn btn-sm btn-primary" />
+
+    </div>
+}
+<script>
+    $(function () {
+        $('#uppdateraKompetens').click(function () {
+            $('#modal-container').modal('hide');
+        });
+    });
+</script>
+

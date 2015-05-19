@@ -229,6 +229,10 @@
     <Content Include="Views\Write\EditKonsult.cshtml" />
     <Content Include="Views\Write\_EditKompetens.cshtml" />
     <Content Include="Views\Write\_EditKompetensModal.cshtml" />
+    <Content Include="Views\Write\_UppgiftTabellPartial.cshtml" />
+    <Content Include="Views\Write\EditUppdrag.cshtml" />
+    <Content Include="Views\Write\_EditUppdrag.cshtml" />
+    <Content Include="Views\Write\_EditUppgiftModal.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -17,7 +17,7 @@ namespace Grafdatabasen.Models
 
         public DateTime slutDatum { get; set; }
 
-        public virtual Konsult Konsult { get; set; }
+        public Konsult Konsult { get; set; }
 
         public virtual Uppdrag Uppdrag { get; set; }
 

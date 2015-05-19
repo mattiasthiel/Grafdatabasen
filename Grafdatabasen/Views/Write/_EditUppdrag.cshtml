@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Grafdatabasen.ViewModels.AddUppgiftViewModel>
+
+
+
+<div class="row">
+    <p>&nbsp;</p>
+    <p>
+
+        @Html.ActionLink("Lägg till Konsulter i uppdraget", "showAddModalKompetens", routeValues: new { Konsult = ViewBag.Konsult }, htmlAttributes: new { @class = "modal-link btn btn-default btn-sm pull-left" })
+
+    </p>
+
+    <table class="table customer">
+        @*Headers*@
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Konsult)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Roll)
+            </th>
+        </tr>
+
+        @*Konsult Data*@
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(c => item.Konsult)
+                </td>
+                <td>
+                    @Html.DisplayFor(c => item.Roll)
+                </td>
+                <td>
+                    @Html.ActionLink("Ta bort", "RemoveUppgift", routeValues: new { Konsult = item.Konsult, Roll = item.Roll, Uppdrag = ViewBag.Uppdrag }, htmlAttributes: new { @class = "btn btn-default btn-sm pull-right" })
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+

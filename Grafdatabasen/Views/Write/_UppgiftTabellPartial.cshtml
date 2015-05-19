@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Grafdatabasen.ViewModels.AddUppgiftViewModel>
+
+
+
+<div class="row">
+    <p>&nbsp;</p>
+
+
+    <table class="table customer">
+        @*Headers*@
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Konsult)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Roll)
+            </th>
+        </tr>
+
+        @*Konsult Data*@
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(c => item.Konsult)
+                </td>
+                <td>
+                    @Html.DisplayFor(c => item.Roll)
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
