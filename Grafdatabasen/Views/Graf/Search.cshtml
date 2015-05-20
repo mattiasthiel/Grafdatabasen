@@ -8,7 +8,6 @@
         font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
         font-size:18px;
         font-style:italic;
-        color:green;
         line-height:32px;
             
     }
@@ -42,13 +41,13 @@
         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
                 <div class="col-md-6" id="enkel">
-                    <select id="select2" style="width:300px">
+                    <select id="select2" style="width:400px">
                         <option></option>
                     </select>
                 </div>
                 @*<div id="searchbutton" class="col-md-1 pull-right">
-                    <button class="btn-sm btn-success">Sök</button>
-                </div>*@
+                        <button class="btn-sm btn-success">Sök</button>
+                    </div>*@
             </div>
         </div>
     </div>
@@ -62,36 +61,24 @@
         </div>
         <div id="nyfiken" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
             <div id="searchPanel" class="panel-body">
-                @{
-                    List<SelectListItem> lista1 = new List<SelectListItem>();
-                    lista1.Add(new SelectListItem { Text = "  --Välj--   ", Value = "0" });
-                    lista1.Add(new SelectListItem { Text = "konsulter", Value = "Konsult" });
-                    lista1.Add(new SelectListItem { Text = "uppdrag", Value = "Uppdrag" });
-                    lista1.Add(new SelectListItem { Text = "företag", Value = "Kund" });
-                    lista1.Add(new SelectListItem { Text = "kompetenser", Value = "Kompetens" });
-                    List<SelectListItem> lista2 = new List<SelectListItem>();
-                    lista2.Add(new SelectListItem { Text = " --Välj-- ", Value = "0" });
-
-                    List<SelectListItem> lista3 = new List<SelectListItem>();
-                    lista3.Add(new SelectListItem { Text = " --Välj-- ", Value = "0" });
-
-                    List<SelectListItem> lista4 = new List<SelectListItem>();
-                    lista4.Add(new SelectListItem { Text = " --Välj-- ", Value = "0" });
-
-                    List<SelectListItem> lista5 = new List<SelectListItem>();
-                    lista5.Add(new SelectListItem { Text = " --Välj-- ", Value = "0" });
-
-                }
-
-                @using (Html.BeginForm())
-                {
-
-                    <div class="searchitem"><span>Jag söker </span>@Html.DropDownListFor(m => m.SearchItem1, lista1, new { id = "lista1", @class = "mtlist" })</div>
-                    <div class="searchitem" id="som1"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>@Html.DropDownListFor(m => m.SearchItem2, lista2, new { id = "lista2", @class = "mtlist" }) @Html.DropDownListFor(m => m.SearchItem3, lista3, new { id = "lista3", @class = "mtlist" })</div>
-                    <div class="searchitem" id="som2"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>@Html.DropDownListFor(m => m.SearchItem4, lista4, new { id = "lista4", @class = "mtlist" }) @Html.DropDownListFor(m => m.SearchItem5, lista5, new { id = "lista5", @class = "mtlist" })</div>
-                    <input type="submit" value="Sök" id="searchButton" onclick="location.href='@Url.Action("createSearchString", "Search", null)'" class="btn btn-sm btn-primary" />
-
-                }
+                <p class="searchitem">
+                    Jag söker
+                    <select id="lista1" class="searchitem mtlist">
+                        <option value="0" selected disabled>något...</option>
+                        <option value="1">konsulter</option>
+                        <option value="2">uppdrag</option>
+                        <option value="3">kunder</option>
+                        <option value="4">kompetenser</option>
+                    </select>
+                </p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <select id="lista2" class="searchitem mtlist" hidden="hidden"><option value="0" selected disabled>---</option></select>
+                </p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select id="lista3" class="searchitem mtlist" hidden="hidden"><option value="0" selected disabled>---</option></select></p>
+                <div class="pull-right">
+                    <button type="button" id="mer" class="btn-sm btn-success " hidden="hidden">+</button>&nbsp;
+                    <button type="button" id="sok" class="btn-sm btn-default" hidden="hidden">Sök</button>
+                </div>
             </div>
         </div>
     </div>
@@ -104,7 +91,10 @@
         </div>
         <div class="panel-body">
             <div id="resultat"></div>
-            <button type="button" id="visa" class="btn-sm btn-success pull-right" >Visa graf</button>
+            <div class="pull-right">
+                <button type="button" id="visa" class="btn-sm btn-success ">Visa graf</button>&nbsp;
+                <button type="button" id="skapacv" class="btn-sm btn-default" hidden="hidden">Skapa cv</button>
+            </div>
         </div>
     </div>
 </div>
@@ -114,8 +104,8 @@
 
 <script type="text/javascript">
     $(function(){
-
-        var request = ajaxneo4j("match (n)  Where n:Konsult OR n:Uppdrag Unwind labels(n) as l Return distinct n.Namn, l");
+        //  ************  Söker nu bara på konsulter och uppdrag ***************
+        var request = ajaxneo4j("match (n)  Where n:Konsult OR n:Uppdrag OR n:Kompetens OR n:Kund Unwind labels(n) as l Return distinct n.Namn, l");
         var query, nodTyp;
         
         request.done(makeOptgroup);
@@ -152,12 +142,12 @@
                     case "Uppdrag": 
                         $("#Uppdrag").append("<option> " + d.row[0] + "</option>");
                         break;
-                    //case Kompetens: 
-                    //    $("#Kompetens").append("<option>" + d.row[0] + "</option>");
-                    //    break;
-                    //case Kund: 
-                    //    $("#Kund").append("<option>" + d.row[0] + "</option>");
-                    //    break;
+                    case "Kompetens": 
+                        $("#Kompetens").append("<option>" + d.row[0] + "</option>");
+                        break;
+                    case "Kund": 
+                        $("#Kund").append("<option>" + d.row[0] + "</option>");
+                        break;
                     default: 
                 }
             })
@@ -173,6 +163,7 @@
             var resultatpanel= $("#resultatpanel");
             var nodes = [];
             resultatpanel.show();
+            $("#skapacv").hide();
             x.results[0].data[0].graph.nodes.forEach(function (n) {
                 if (idIndex(nodes, n.id) == null) {
                     var property = [];
@@ -182,6 +173,10 @@
                     var resultat= $("#resultat");
                     resultat.html("<p>" + n.labels[0] + "</br>" + property + "</p>");
                     nodTyp = n.labels[0];
+                    if (nodTyp == "Konsult") {
+                        $("#skapacv").show();
+                    }
+
                 }
             })
             return;
@@ -297,24 +292,130 @@
                 node.append("title")
                         .text(function (d) { return d.label; });
 
-                //function zoomed() {
-                //    container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-                //}
-                //function dragstarted(d) {
-                //    d3.event.sourceEvent.stopPropagation();
-                //    d3.select(this).classed("dragging", true);
-                //    force.start();
-                //}
-                //function dragged(d) {
-                //    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-                //}
-                //function dragended(d) {
-                //    d3.select(this).classed("dragging", false);
-                //}
             }
         })
 
     });
 
+    $(function(){
+        
+        var query1 = "", query2 = "", query3 = "", query4 = "";
+
+        // ******  Hårdkodade data för demonstration:
+        allaKunder = new Array("Jönköping Airport", "Per Brahe Gymnasiet", "Jönköpings Kommun", "Skogssällskapet", "Imano AB");
+        allaKompetenser = new Array("C#", "C++", "Webb", "MVC", "Neo4j", "BizTalk", "Windows Azure", "SharePoint", "Woodpecker");
+        allaRoller = new Array("Projektledare", "Webbstrateg", "Utvecklare", "Designer", "Utredare", "Redaktör", "Produktägare", "Testare", "Utbildare", "Arkitekt");
+        allaKontor = new Array("Jönköping", "Växjö", "Göteborg", "Leksand", "Falun");
+        allaMarknadssegment = new Array("Energi", "Skog", "Såg", "Papper", "Såg Optinex", "Övrigt");
+        allaCert = new Array("Neo4j", "BizTalk", "Windows Azure", "SharePoint");
+        allaKonsulter = new Array("Albert Fors", "Alexander Bentlund", "Anders Axelsson", "Anders Fagerberg", "Anna Otterborg", "Anna Törnblad", "Anna-Karin Sandstedt", "Antonio Freitas", "Björn Andersson","Lisa Bylin", "m fl");
+
+        // ************************************
+
+        konsult = new Array("som har kompetens inom ","som haft uppdrag som ","som kan rollen ","som utfört uppdrag för","som har certifiering för ");
+        uppdrag = new Array("som utförts för ","som berört området ","som använt tekniken ","som utförts av ");
+        kund = new Array("som beställt uppdrag inom området ","som finns inom segmentet ");
+        kompetens = new Array("som är av typen ","som finns på kontoret i ","som inte finns på kontoret i ");
+
+        $("#lista1").change(function () {
+            $("#lista2").show();
+            $("#lista3, #mer, #sok").hide();
+            populate2();
+        })
+        $("#lista2").change(function () {
+            $("#lista3").show();
+            populate3();
+        })
+        $("#lista3").change(function () {
+            $("#sok").show();
+        })
+
+        function populate2(){
+            // get the value that was selected so we can populate the other one
+            var val1 = $("#lista1").val();
+
+            // clear the other select box
+            $("#lista2").html("<option value='0' selected disabled>som...</option>");
+            // now fill with new code depending on the selection
+            if(val1 == "1"){
+                query1 = "Konsult";
+                konsult.forEach(function(value, index) { 
+                    $("#lista2").append('<option value="1'+index+'">'+value+'</option>');
+                });
+            }
+            else if(val1=="2"){
+                query1 = "Uppdrag";
+                uppdrag.forEach(function(value, index) {
+                    $('#lista2').append('<option value="2'+index+'">'+value+'</option>');
+                });
+            }
+            else if(val1=="3"){
+                query1 = "Kund";
+                kund.forEach(function(value, index) {
+                    $('#lista2').append('<option value="3'+index+'">'+value+'</option>');
+                });
+            }else if(val1=="4"){
+                kompetens.forEach(function(value, index) {
+                    query1 = "Kompetens";
+                    $('#lista2').append('<option value="4'+index+'">'+value+'</option>');
+                });
+            }
+        }
+
+        function populate3(){
+            var val2 = $("#lista2").val();
+            $("#lista3").html("<option value='0' selected disabled>(välj)</option>");
+
+            switch (val2) {
+                case "10":
+                case "14":
+                case "40":
+                case "30":
+                case "21":
+                case "22":
+                    allaKompetenser.forEach(function(value, index) { 
+                        $("#lista3").append('<option value="1'+index+'">'+value+'</option>');
+                        });
+                    break;
+                case "11":
+                    allaRoller.forEach(function(value, index) { 
+                        $("#lista3").append('<option value="1'+index+'">'+value+'</option>');
+                    });
+                    break;
+                case "12":
+                    allaCert.forEach(function(value, index) { 
+                        $("#lista3").append('<option value="1'+index+'">'+value+'</option>');
+                    });
+                    break;
+                case "13":
+                case "20":
+                    allaKunder.forEach(function(value, index) { 
+                        $("#lista3").append('<option value="1'+index+'">'+value+'</option>');
+                    });
+                    $("#mer").show();
+                    break;
+                case "23":
+                    allaKonsulter.forEach(function(value, index) { 
+                        $("#lista3").append('<option value="1'+index+'">'+value+'</option>');
+                    });
+                    break;
+                case "31":
+                    allaMarknadssegment.forEach(function(value, index) { 
+                        $("#lista3").append('<option value="1'+index+'">'+value+'</option>');
+                    });
+                    break;
+                case "41":
+                case "42":
+                    allaKontor.forEach(function(t) { 
+                        $("#lista3").append('<option>'+t+'</option>');
+                    });
+                    break;
+                default:
+                    alert("Ooops... Här har vi en bugg..!");
+            }
+
+        }
+
+    })
 </script>
 
